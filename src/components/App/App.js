@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 import AppHeader from '../AppHeader';
 import SearchPanel from '../SearchPanel';
@@ -8,8 +8,28 @@ import ItemAddForm from '../ItemAddForm';
 
 import './App.css';
 
+import firebase from 'firebase';
+
+var firebaseConfig = {
+    apiKey: "AIzaSyClGg4uNu6RviZYrS_U5-PVGV5wbFVIeDI",
+    authDomain: "todo-list-c85d9.firebaseapp.com",
+    databaseURL: "https://todo-list-c85d9.firebaseio.com",
+    projectId: "todo-list-c85d9",
+    storageBucket: "",
+    messagingSenderId: "127468982712",
+    appId: "1:127468982712:web:9c65c5e667c4326c"
+};
+
+firebase.initializeApp(firebaseConfig);
+// var todoTaskList;
+// firebase.database().ref('tasks').once('value').then(function (snapshot) {
+//     console.log(snapshot.val());
+//     // todoTaskList = snapshot.val();
+// });
+
+
 export default class App extends Component {
-    
+
     constructor() {
         super();
 
@@ -24,18 +44,30 @@ export default class App extends Component {
             };
         };
 
+        this.componentDidMount = () => {
+            var th = this;
+            firebase.database().ref('tasks').once('value').then(function (snapshot) {
+                th.setState({
+                    todoData: snapshot.val().map((el) => {
+                        return th.createTodoItem(el);
+                    }),
+                });
+            });
+        }
+
         this.state = {
-            todoData: [
-                this.createTodoItem('Drink Coffee'),
-                this.createTodoItem('Write Code'),
-                this.createTodoItem('Make App'),
-            ],
+            // todoData: [
+            //     this.createTodoItem('Drink Coffee'),
+            //     this.createTodoItem('Write Code'),
+            //     this.createTodoItem('Make App'),
+            // ],
+            todoData: [],
             term: '',
             filter: 'active'
         };
 
         this.searchItem = (items, term) => {
-            if(term.length === 0) {
+            if (term.length === 0) {
                 return items;
             }
             return items.filter((item) => {
@@ -72,7 +104,7 @@ export default class App extends Component {
         this.addItem = (text) => {
             const newItem = this.createTodoItem(text);
 
-            this.setState(({todoData}) => {
+            this.setState(({ todoData }) => {
                 const newArr = [...todoData, newItem];
                 return {
                     todoData: newArr
@@ -82,19 +114,19 @@ export default class App extends Component {
 
         this.toggleProperty = (arr, id, propName) => {
             const idx = arr.findIndex((el) => el.id === id),
-            oldItem = arr[idx],
-            newItem = {...oldItem, [propName]: !oldItem[propName]},
-            newArray = [
-                ...arr.slice(0, idx),
-                newItem,
-                ...arr.slice(idx + 1)
-              
-            ]
+                oldItem = arr[idx],
+                newItem = { ...oldItem, [propName]: !oldItem[propName] },
+                newArray = [
+                    ...arr.slice(0, idx),
+                    newItem,
+                    ...arr.slice(idx + 1)
+
+                ]
             return newArray;
         }
 
         this.onToggleImportant = (id) => {
-            this.setState(({todoData}) => {
+            this.setState(({ todoData }) => {
                 return {
                     todoData: this.toggleProperty(todoData, id, 'important')
                 }
@@ -102,7 +134,7 @@ export default class App extends Component {
         }
 
         this.onToggleDone = (id) => {
-            this.setState(({todoData}) => {
+            this.setState(({ todoData }) => {
                 return {
                     todoData: this.toggleProperty(todoData, id, 'done')
                 }
@@ -122,8 +154,25 @@ export default class App extends Component {
         }
     }
 
+    // componentDidMount() {
+    //     var th = this;
+    //     firebase.database().ref('tasks').once('value').then(function (snapshot) {
+    //         console.log(snapshot.val());
+    //         var a = snapshot.val().map((el) => {
+    //             return th.createTodoItem(el);
+    //         });
+    //         console.log(a);
+    //         th.setState({
+    //             todoData: snapshot.val().map((el) => {
+    //                 return th.createTodoItem(el);
+    //             }),
+    //         });
+    //         console.log(th.state);
+    //     });
+    // }
+
     render() {
-        const {todoData, term, filter} = this.state;
+        const { todoData, term, filter } = this.state;
         const visibleItems = this.filter(this.searchItem(todoData, term), filter);
         const doneCount = todoData.filter((el) => el.done).length;
         const todoCount = todoData.length - doneCount;
@@ -133,13 +182,13 @@ export default class App extends Component {
                 <AppHeader todo={todoCount} done={doneCount} />
                 <div className="top-panel d-flex">
                     <SearchPanel onSearchChange={this.onSearchChange} />
-                    <ItemStatusFilter filter={filter} onFilterChange = {this.onFilterChange} />
+                    <ItemStatusFilter filter={filter} onFilterChange={this.onFilterChange} />
                 </div>
-                <TodoList 
+                <TodoList
                     todos={visibleItems}
-                    onDeleted={ (id) => this.deleteItem(id) } 
-                    onToggleImportant = {this.onToggleImportant}
-                    onToggleDone = {this.onToggleDone}
+                    onDeleted={(id) => this.deleteItem(id)}
+                    onToggleImportant={this.onToggleImportant}
+                    onToggleDone={this.onToggleDone}
                 />
                 <ItemAddForm onItemAdded={this.addItem} />
             </div>
