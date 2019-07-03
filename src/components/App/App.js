@@ -45,14 +45,20 @@ export default class App extends Component {
         };
 
         this.componentDidMount = () => {
-            var th = this;
-            firebase.database().ref('tasks').once('value').then(function (snapshot) {
-                th.setState({
-                    todoData: snapshot.val().map((el) => {
-                        return th.createTodoItem(el);
-                    }),
-                });
-            });
+            // firebase.database().ref('tasks').set({
+            //     label: 'taskName',
+            //     important: false,
+            //     done: false,
+            //     id: this.maxId++
+            // });
+            firebase.database().ref('tasks').on('value', (snapshot) => {
+                console.log(snapshot.val());
+                // this.setState({
+                //     todoData: snapshot.val().map((el) => {
+                //         return this.createTodoItem(el);
+                //     }),
+                // });
+            })
         }
 
         this.state = {
@@ -104,6 +110,7 @@ export default class App extends Component {
         this.addItem = (text) => {
             const newItem = this.createTodoItem(text);
 
+            firebase.database().ref('tasks/' + newItem.id).set(newItem);
             this.setState(({ todoData }) => {
                 const newArr = [...todoData, newItem];
                 return {
@@ -153,23 +160,6 @@ export default class App extends Component {
             });
         }
     }
-
-    // componentDidMount() {
-    //     var th = this;
-    //     firebase.database().ref('tasks').once('value').then(function (snapshot) {
-    //         console.log(snapshot.val());
-    //         var a = snapshot.val().map((el) => {
-    //             return th.createTodoItem(el);
-    //         });
-    //         console.log(a);
-    //         th.setState({
-    //             todoData: snapshot.val().map((el) => {
-    //                 return th.createTodoItem(el);
-    //             }),
-    //         });
-    //         console.log(th.state);
-    //     });
-    // }
 
     render() {
         const { todoData, term, filter } = this.state;
