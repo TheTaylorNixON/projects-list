@@ -40,7 +40,9 @@ export default class App extends Component {
                 label: label,
                 important: false,
                 done: false,
-                id: this.maxId++
+                // id: firebase.database().ref().child('id')
+                // id: this.maxId++
+                id: this.maxId+1
             };
         };
 
@@ -53,11 +55,15 @@ export default class App extends Component {
             // });
             firebase.database().ref('tasks').on('value', (snapshot) => {
                 console.log(snapshot.val());
-                // this.setState({
-                //     todoData: snapshot.val().map((el) => {
-                //         return this.createTodoItem(el);
-                //     }),
-                // });
+                if (snapshot.val()) {
+                    this.setState({
+                        todoData: snapshot.val()
+                        // todoData: snapshot.val().map((el) => {
+                        //     return this.createTodoItem(el);
+                        // }),
+                    });
+                    this.maxId = snapshot.val()[snapshot.val().length-1].id
+                }
             })
         }
 
@@ -111,12 +117,12 @@ export default class App extends Component {
             const newItem = this.createTodoItem(text);
 
             firebase.database().ref('tasks/' + newItem.id).set(newItem);
-            this.setState(({ todoData }) => {
-                const newArr = [...todoData, newItem];
-                return {
-                    todoData: newArr
-                }
-            });
+            // this.setState(({ todoData }) => {
+            //     const newArr = [...todoData, newItem];
+            //     return {
+            //         todoData: newArr
+            //     }
+            // });
         };
 
         this.toggleProperty = (arr, id, propName) => {
