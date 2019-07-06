@@ -6,26 +6,9 @@ import TodoList from '../TodoList';
 import ItemStatusFilter from '../ItemStatusFilter';
 import ItemAddForm from '../ItemAddForm';
 
+import database from '../../services/firebase';
+
 import './App.css';
-
-import firebase from 'firebase';
-
-var firebaseConfig = {
-    apiKey: "AIzaSyClGg4uNu6RviZYrS_U5-PVGV5wbFVIeDI",
-    authDomain: "todo-list-c85d9.firebaseapp.com",
-    databaseURL: "https://todo-list-c85d9.firebaseio.com",
-    projectId: "todo-list-c85d9",
-    storageBucket: "",
-    messagingSenderId: "127468982712",
-    appId: "1:127468982712:web:9c65c5e667c4326c"
-};
-
-firebase.initializeApp(firebaseConfig);
-// var todoTaskList;
-// firebase.database().ref('tasks').once('value').then(function (snapshot) {
-//     console.log(snapshot.val());
-//     // todoTaskList = snapshot.val();
-// });
 
 
 export default class App extends Component {
@@ -37,70 +20,107 @@ export default class App extends Component {
 
         this.createTodoItem = (label) => {
             return {
-                label: label,
-                important: false,
                 done: false,
-                // id: firebase.database().ref().child('id')
-                // id: this.maxId++
-                id: this.maxId+1
+                inDeveloping: false,
+                label: label
             };
         };
 
         this.componentDidMount = () => {
-            // firebase.database().ref('tasks').set({
-            //     label: 'taskName',
-            //     important: false,
-            //     done: false,
-            //     id: this.maxId++
-            // });
-            firebase.database().ref('tasks').on('value', (snapshot) => {
-                console.log(snapshot.val());
-                if (snapshot.val()) {
+            database.ref('tasks').once('value').then(snapshot => {
+                const todoData = snapshot.val();
+                console.log(todoData);
+
+                if (todoData) {
+                    Object.keys(todoData).map((key) => {
+                        console.log(key);
+                        const item = todoData[key];
+                        console.log(item);
+                    })
                     this.setState({
-                        todoData: snapshot.val()
-                        // todoData: snapshot.val().map((el) => {
-                        //     return this.createTodoItem(el);
-                        // }),
-                    });
-                    this.maxId = snapshot.val()[snapshot.val().length-1].id
+                        todoData
+                    })
+                    // this.maxId = todoData[todoData.length - 1].id + 1;
                 }
+            });
+
+
+            // var newPostKey = database.ref().child('tasks').push().key;
+            // console.log(newPostKey);
+            // console.log(database.ref().child('tasks').push().key);
+
+
+            database.ref('tasks').on('value', snapshot => {
+                // setTimeout(() => {
+                //     this.setState(({ todoData }) => {
+                //         console.log(todoData);
+                //         console.log(snapshot.val());
+                //         console.log(todoData === snapshot.val());
+                //     });
+                // }, 1000);
+                // console.log(this.state.todoData);
+                // this.setState(({ todoData }) => {
+                //     console.log(todoData);
+                //     console.log(snapshot.val());
+                //     console.log(todoData == snapshot.val());
+                // });
+                // if (snapshot.val()) {
+                //     this.setState({
+                //         todoData: snapshot.val()
+                //         // todoData: snapshot.val().map((el) => {
+                //         //     return this.createTodoItem(el);
+                //         // }),
+                //     });
+                //     this.maxId = snapshot.val()[snapshot.val().length - 1].id
+                // }
             })
         }
 
         this.state = {
-            // todoData: [
-            //     this.createTodoItem('Drink Coffee'),
-            //     this.createTodoItem('Write Code'),
-            //     this.createTodoItem('Make App'),
-            // ],
-            todoData: [],
+            todoData: {},
             term: '',
-            filter: 'active'
+            filter: 'all'
         };
 
         this.searchItem = (items, term) => {
             if (term.length === 0) {
-                return items;
+                return Object.keys(items);
             }
-            return items.filter((item) => {
-                return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+            return Object.keys(items).filter(key => {
+                return items[key].label.toLowerCase() === term.toLowerCase();
             });
+            // return serchedItems.map(key => {
+            //     return items[key];
+            // })
+            // return items.filter((item) => {
+            //     return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+            // });
         }
 
-        this.filter = (items, filter) => {
+        this.filter = (keys, items, filter) => {
+            let newItems = {};
+
             switch (filter) {
                 case 'all':
-                    return items;
+                    keys.forEach(key => {
+                        newItems[key] = items[key];
+                    });
+                    return newItems;
                 case 'active':
-                    return items.filter((item) => !item.done);
+                    keys.filter(key => !items[key].done).forEach(key => {
+                        newItems[key] = items[key];
+                    });
+                    return newItems;
                 case 'done':
-                    return items.filter((item) => item.done);
-                default:
-                    return items;
+                    keys.filter(key => items[key].done).forEach(key => {
+                        newItems[key] = items[key];
+                    });
+                    return newItems;
             }
         }
 
         this.deleteItem = (id) => {
+            database.ref('tasks/' + id).remove();
             this.setState(({ todoData }) => {
                 const idx = todoData.findIndex((el) => el.id === id);
                 // const newArray = todoData.slice();  - пустой slice просто копирует массив
@@ -114,44 +134,83 @@ export default class App extends Component {
         };
 
         this.addItem = (text) => {
+            const newChildRef = database.ref('tasks').push();
             const newItem = this.createTodoItem(text);
 
-            firebase.database().ref('tasks/' + newItem.id).set(newItem);
-            // this.setState(({ todoData }) => {
-            //     const newArr = [...todoData, newItem];
-            //     return {
-            //         todoData: newArr
+            newChildRef.set(newItem).then(() => {
+                this.setState(({ todoData }) => {
+                    const newData = { ...todoData, [newChildRef.key]: newItem };
+                    return {
+                        todoData: newData
+                    }
+                });
+            }).catch((error) => {
+                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
+            });
+
+            // database.ref('tasks/' + newItem.id).set({ [newItem.id]: newItem }, error => {
+            //     if (error) {
+            //         console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
+            //     } else {
+            //         this.setState(({ todoData }) => {
+            //             const newArr = [...todoData, newItem];
+            //             return {
+            //                 todoData: newArr
+            //             }
+            //         });
             //     }
             // });
         };
 
-        this.toggleProperty = (arr, id, propName) => {
-            const idx = arr.findIndex((el) => el.id === id),
-                oldItem = arr[idx],
-                newItem = { ...oldItem, [propName]: !oldItem[propName] },
-                newArray = [
-                    ...arr.slice(0, idx),
-                    newItem,
-                    ...arr.slice(idx + 1)
+        this.toggleProperty = (todoData, id, propName) => {
+            const oldItem = todoData[id];
+            const newItem = { ...oldItem, [propName]: !oldItem[propName] };
+            const newData = {
+                ...todoData,
+                [id]: newItem
+            };
 
-                ]
-            return newArray;
+            return new Promise((resolve, reject) => {
+                database.ref('tasks/' + id).update(newItem, error => {
+                    if (error) {
+                        reject(error);
+                    } else {
+                        resolve(newData);
+                    }
+                });
+            });
         }
 
-        this.onToggleImportant = (id) => {
+        this.updateTask = (id, propName) => {
+
             this.setState(({ todoData }) => {
-                return {
-                    todoData: this.toggleProperty(todoData, id, 'important')
-                }
-            })
+                this.toggleProperty(todoData, id, propName).then(newData => {
+                    this.setState({
+                        todoData: newData
+                    });
+                }).catch(error => {
+                    console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
+                });
+            });
+
+            // this.setState(async ({ todoData }) => {
+            //     try {
+            //         const newData = await this.toggleProperty(todoData, id, propName);
+            //         this.setState({
+            //             todoData: newData
+            //         })
+            //     } catch (error) {
+            //         console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
+            //     }
+            // });
+        }
+
+        this.onToggleDeveloping = (id) => {
+            this.updateTask(id, 'inDeveloping');
         }
 
         this.onToggleDone = (id) => {
-            this.setState(({ todoData }) => {
-                return {
-                    todoData: this.toggleProperty(todoData, id, 'done')
-                }
-            })
+            this.updateTask(id, 'done');
         }
 
         this.onSearchChange = (term) => {
@@ -169,9 +228,10 @@ export default class App extends Component {
 
     render() {
         const { todoData, term, filter } = this.state;
-        const visibleItems = this.filter(this.searchItem(todoData, term), filter);
-        const doneCount = todoData.filter((el) => el.done).length;
-        const todoCount = todoData.length - doneCount;
+        const visibleItems = this.filter(this.searchItem(todoData, term), todoData, filter);
+        console.log(visibleItems);
+        const doneCount = Object.keys(todoData).filter(key => todoData[key].done).length;
+        const todoCount = Object.keys(todoData).length - doneCount;
 
         return (
             <div className="todo-app">
@@ -183,7 +243,7 @@ export default class App extends Component {
                 <TodoList
                     todos={visibleItems}
                     onDeleted={(id) => this.deleteItem(id)}
-                    onToggleImportant={this.onToggleImportant}
+                    onToggleDeveloping={this.onToggleDeveloping}
                     onToggleDone={this.onToggleDone}
                 />
                 <ItemAddForm onItemAdded={this.addItem} />
