@@ -4,7 +4,6 @@ import TodoListItem from '../TodoListItem';
 import './TodoList.css';
 
 const TodoList = ({ todos, onDeleted, onToggleDeveloping, onToggleDone }) => {
-    console.log(todos);
     const el = Object.keys(todos).map(key => {
         const itemProps = todos[key];
 

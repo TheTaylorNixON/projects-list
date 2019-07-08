@@ -29,41 +29,21 @@ export default class App extends Component {
         this.componentDidMount = () => {
             database.ref('tasks').once('value').then(snapshot => {
                 const todoData = snapshot.val();
-                console.log(todoData);
 
                 if (todoData) {
-                    Object.keys(todoData).map((key) => {
-                        console.log(key);
-                        const item = todoData[key];
-                        console.log(item);
-                    })
                     this.setState({
                         todoData
                     })
-                    // this.maxId = todoData[todoData.length - 1].id + 1;
                 }
             });
 
 
             // var newPostKey = database.ref().child('tasks').push().key;
-            // console.log(newPostKey);
             // console.log(database.ref().child('tasks').push().key);
 
 
             database.ref('tasks').on('value', snapshot => {
-                // setTimeout(() => {
-                //     this.setState(({ todoData }) => {
-                //         console.log(todoData);
-                //         console.log(snapshot.val());
-                //         console.log(todoData === snapshot.val());
-                //     });
-                // }, 1000);
-                // console.log(this.state.todoData);
                 // this.setState(({ todoData }) => {
-                //     console.log(todoData);
-                //     console.log(snapshot.val());
-                //     console.log(todoData == snapshot.val());
-                // });
                 // if (snapshot.val()) {
                 //     this.setState({
                 //         todoData: snapshot.val()
@@ -101,11 +81,6 @@ export default class App extends Component {
             let newItems = {};
 
             switch (filter) {
-                case 'all':
-                    keys.forEach(key => {
-                        newItems[key] = items[key];
-                    });
-                    return newItems;
                 case 'active':
                     keys.filter(key => !items[key].done).forEach(key => {
                         newItems[key] = items[key];
@@ -116,20 +91,21 @@ export default class App extends Component {
                         newItems[key] = items[key];
                     });
                     return newItems;
+                default:    // case 'all'
+                    keys.forEach(key => newItems[key] = items[key]);
+                    return newItems;
             }
         }
 
         this.deleteItem = (id) => {
             database.ref('tasks/' + id).remove();
             this.setState(({ todoData }) => {
-                const idx = todoData.findIndex((el) => el.id === id);
-                // const newArray = todoData.slice();  - пустой slice просто копирует массив
-                // newArray.splice(idx,1) - splice удаляет элемент по индекусу, второй арг(1) кол-во элементов которое нужно удалить
+                const newData = Object.assign(todoData, {});
+                delete newData[id];
 
                 return {
-                    // todoData: newArray - либо так, вроде тоже правильно
-                    todoData: [...todoData.slice(0, idx), ...todoData.slice(idx + 1)]
-                };
+                    todoData: newData
+                }
             });
         };
 
@@ -229,7 +205,6 @@ export default class App extends Component {
     render() {
         const { todoData, term, filter } = this.state;
         const visibleItems = this.filter(this.searchItem(todoData, term), todoData, filter);
-        console.log(visibleItems);
         const doneCount = Object.keys(todoData).filter(key => todoData[key].done).length;
         const todoCount = Object.keys(todoData).length - doneCount;
 
