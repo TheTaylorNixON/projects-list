@@ -22,27 +22,71 @@ export default class App extends Component {
             return {
                 done: false,
                 inDeveloping: false,
-                label: label
+                label
             };
         };
 
         this.componentDidMount = () => {
-            database.ref('tasks').once('value').then(snapshot => {
-                const todoData = snapshot.val();
+            // database.ref('tasks').once('value').then(snapshot => {
+            //     const todoData = snapshot.val();
+
+            //     if (todoData) {
+            //         this.setState({
+            //             todoData
+            //         })
+            //     }
+            // });
+
+            database.ref('tasks').on('child_added', doc => {
+                // console.log(doc);
+                // console.log("child_added: ", doc.val());
+                const todoData = doc.val();
 
                 if (todoData) {
                     this.setState({
-                        todoData
+                        todoData: {[doc.key]: doc.val()}
                     })
                 }
+                console.log({ [doc.key]: doc.val() });
             });
+
+            setTimeout(()=>{
+                console.log(this.state);
+            },3000)
 
 
             // var newPostKey = database.ref().child('tasks').push().key;
             // console.log(database.ref().child('tasks').push().key);
 
+            // var ref = firebase.database().ref(user + "/data/order_name");
 
-            database.ref('tasks').on('value', snapshot => {
+            // database.ref('tasks').on("value", function(snapshot) {
+            //     console.log(snapshot);
+            //     console.log(snapshot.val());
+            // });
+
+
+
+
+
+            database.ref('tasks').on('child_added', doc => {
+                console.log("child_added: ", doc.val());
+            });
+
+            database.ref('tasks').on('child_changed', doc => {
+                console.log("child_changed: ", doc.val());
+            });
+
+
+
+
+
+
+            // database.ref('tasks').on('value', doc => {
+            //     console.log(doc.val());
+            // });
+
+            // database.ref('tasks').on('value', snapshot => {
                 // this.setState(({ todoData }) => {
                 // if (snapshot.val()) {
                 //     this.setState({
@@ -53,7 +97,7 @@ export default class App extends Component {
                 //     });
                 //     this.maxId = snapshot.val()[snapshot.val().length - 1].id
                 // }
-            })
+            // })
         }
 
         this.state = {
