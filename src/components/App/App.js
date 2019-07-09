@@ -27,8 +27,40 @@ export default class App extends Component {
         };
 
         this.componentDidMount = () => {
-            // database.ref('tasks').once('value').then(snapshot => {
-            //     const todoData = snapshot.val();
+            // const tasksRef = database.ref('tasks');
+            const tasksRef = database.ref().child("tasks");
+            const startKey = tasksRef.push().key;
+
+            tasksRef.once('value').then(snapshot => {
+                const todoData = snapshot.val();
+
+                if (todoData) {
+                    this.setState({
+                        todoData
+                    })
+                }
+            });
+
+
+            // const messagesRef = database.ref().child("tasks");
+            tasksRef.orderByKey().startAt(startKey).on("child_added", snapshot => {
+                console.log(snapshot.val());
+            });
+
+            tasksRef.on('child_changed', snapshot => {
+                console.log(snapshot.val());
+            })
+
+            tasksRef.on('child_removed', snapshot => {
+                console.log(snapshot.val());
+                console.log(snapshot.key);
+            })
+
+
+            // database.ref('tasks').on('child_added', doc => {
+            //     // console.log(doc);
+            //     // console.log("child_added: ", doc.val());
+            //     const todoData = doc.val();
 
             //     if (todoData) {
             //         this.setState({
@@ -37,22 +69,7 @@ export default class App extends Component {
             //     }
             // });
 
-            database.ref('tasks').on('child_added', doc => {
-                // console.log(doc);
-                // console.log("child_added: ", doc.val());
-                const todoData = doc.val();
 
-                if (todoData) {
-                    this.setState({
-                        todoData: {[doc.key]: doc.val()}
-                    })
-                }
-                console.log({ [doc.key]: doc.val() });
-            });
-
-            setTimeout(()=>{
-                console.log(this.state);
-            },3000)
 
 
             // var newPostKey = database.ref().child('tasks').push().key;
@@ -69,13 +86,13 @@ export default class App extends Component {
 
 
 
-            database.ref('tasks').on('child_added', doc => {
-                console.log("child_added: ", doc.val());
-            });
+            // database.ref('tasks').on('child_added', doc => {
+            //     console.log("child_added: ", doc.val());
+            // });
 
-            database.ref('tasks').on('child_changed', doc => {
-                console.log("child_changed: ", doc.val());
-            });
+            // database.ref('tasks').on('child_changed', doc => {
+            //     console.log("child_changed: ", doc.val());
+            // });
 
 
 
@@ -87,16 +104,16 @@ export default class App extends Component {
             // });
 
             // database.ref('tasks').on('value', snapshot => {
-                // this.setState(({ todoData }) => {
-                // if (snapshot.val()) {
-                //     this.setState({
-                //         todoData: snapshot.val()
-                //         // todoData: snapshot.val().map((el) => {
-                //         //     return this.createTodoItem(el);
-                //         // }),
-                //     });
-                //     this.maxId = snapshot.val()[snapshot.val().length - 1].id
-                // }
+            // this.setState(({ todoData }) => {
+            // if (snapshot.val()) {
+            //     this.setState({
+            //         todoData: snapshot.val()
+            //         // todoData: snapshot.val().map((el) => {
+            //         //     return this.createTodoItem(el);
+            //         // }),
+            //     });
+            //     this.maxId = snapshot.val()[snapshot.val().length - 1].id
+            // }
             // })
         }
 
