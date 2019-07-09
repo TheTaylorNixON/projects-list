@@ -16,8 +16,6 @@ export default class App extends Component {
     constructor() {
         super();
 
-        this.maxId = 0;
-
         this.createTodoItem = (label) => {
             return {
                 done: false,
@@ -27,94 +25,24 @@ export default class App extends Component {
         };
 
         this.componentDidMount = () => {
-            // const tasksRef = database.ref('tasks');
             const tasksRef = database.ref().child("tasks");
             const startKey = tasksRef.push().key;
 
             tasksRef.once('value').then(snapshot => {
-                const todoData = snapshot.val();
-
-                if (todoData) {
-                    this.setState({
-                        todoData
-                    })
-                }
+                this.onDataChange(snapshot, 'app_start');
             });
 
-
-            // const messagesRef = database.ref().child("tasks");
-            tasksRef.orderByKey().startAt(startKey).on("child_added", snapshot => {
-                console.log(snapshot.val());
+            tasksRef.orderByKey().startAt(startKey).on('child_added', snapshot => {
+                this.onDataChange(snapshot, 'child_added');
             });
 
             tasksRef.on('child_changed', snapshot => {
-                console.log(snapshot.val());
+                this.onDataChange(snapshot, 'child_changed');
             })
 
             tasksRef.on('child_removed', snapshot => {
-                console.log(snapshot.val());
-                console.log(snapshot.key);
+                this.onDataChange(snapshot, 'child_removed');
             })
-
-
-            // database.ref('tasks').on('child_added', doc => {
-            //     // console.log(doc);
-            //     // console.log("child_added: ", doc.val());
-            //     const todoData = doc.val();
-
-            //     if (todoData) {
-            //         this.setState({
-            //             todoData
-            //         })
-            //     }
-            // });
-
-
-
-
-            // var newPostKey = database.ref().child('tasks').push().key;
-            // console.log(database.ref().child('tasks').push().key);
-
-            // var ref = firebase.database().ref(user + "/data/order_name");
-
-            // database.ref('tasks').on("value", function(snapshot) {
-            //     console.log(snapshot);
-            //     console.log(snapshot.val());
-            // });
-
-
-
-
-
-            // database.ref('tasks').on('child_added', doc => {
-            //     console.log("child_added: ", doc.val());
-            // });
-
-            // database.ref('tasks').on('child_changed', doc => {
-            //     console.log("child_changed: ", doc.val());
-            // });
-
-
-
-
-
-
-            // database.ref('tasks').on('value', doc => {
-            //     console.log(doc.val());
-            // });
-
-            // database.ref('tasks').on('value', snapshot => {
-            // this.setState(({ todoData }) => {
-            // if (snapshot.val()) {
-            //     this.setState({
-            //         todoData: snapshot.val()
-            //         // todoData: snapshot.val().map((el) => {
-            //         //     return this.createTodoItem(el);
-            //         // }),
-            //     });
-            //     this.maxId = snapshot.val()[snapshot.val().length - 1].id
-            // }
-            // })
         }
 
         this.state = {
@@ -123,6 +51,37 @@ export default class App extends Component {
             filter: 'all'
         };
 
+        this.onDataChange = (snapshot, actionType) => {
+            if (snapshot) {
+                this.setState(({ todoData }) => {
+                    let newState;
+
+                    switch (actionType) {
+                        case 'app_start':
+                            return {
+                                todoData: snapshot.val()
+                            }
+                        case 'child_added':
+                        case 'child_changed':
+                            newState = { ...todoData, [snapshot.key]: snapshot.val() }
+
+                            return {
+                                todoData: newState
+                            }
+                        case 'child_removed':
+                            newState = { ...todoData };
+                            delete newState[snapshot.key];
+
+                            return {
+                                todoData: newState
+                            }
+                        default:
+                            return;
+                    }
+                });
+            }
+        }
+
         this.searchItem = (items, term) => {
             if (term.length === 0) {
                 return Object.keys(items);
@@ -130,12 +89,6 @@ export default class App extends Component {
             return Object.keys(items).filter(key => {
                 return items[key].label.toLowerCase() === term.toLowerCase();
             });
-            // return serchedItems.map(key => {
-            //     return items[key];
-            // })
-            // return items.filter((item) => {
-            //     return item.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
-            // });
         }
 
         this.filter = (keys, items, filter) => {
@@ -160,86 +113,34 @@ export default class App extends Component {
 
         this.deleteItem = (id) => {
             database.ref('tasks/' + id).remove();
-            this.setState(({ todoData }) => {
-                const newData = Object.assign(todoData, {});
-                delete newData[id];
-
-                return {
-                    todoData: newData
-                }
-            });
         };
 
         this.addItem = (text) => {
             const newChildRef = database.ref('tasks').push();
             const newItem = this.createTodoItem(text);
 
-            newChildRef.set(newItem).then(() => {
-                this.setState(({ todoData }) => {
-                    const newData = { ...todoData, [newChildRef.key]: newItem };
-                    return {
-                        todoData: newData
-                    }
-                });
-            }).catch((error) => {
+            newChildRef.set(newItem).catch((error) => {
                 console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
             });
-
-            // database.ref('tasks/' + newItem.id).set({ [newItem.id]: newItem }, error => {
-            //     if (error) {
-            //         console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
-            //     } else {
-            //         this.setState(({ todoData }) => {
-            //             const newArr = [...todoData, newItem];
-            //             return {
-            //                 todoData: newArr
-            //             }
-            //         });
-            //     }
-            // });
         };
 
         this.toggleProperty = (todoData, id, propName) => {
             const oldItem = todoData[id];
             const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-            const newData = {
-                ...todoData,
-                [id]: newItem
-            };
 
-            return new Promise((resolve, reject) => {
-                database.ref('tasks/' + id).update(newItem, error => {
-                    if (error) {
-                        reject(error);
-                    } else {
-                        resolve(newData);
-                    }
-                });
+            database.ref('tasks/' + id).update(newItem).catch((error) => {
+                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
             });
         }
 
         this.updateTask = (id, propName) => {
+            const { todoData } = this.state;
+            const oldItem = todoData[id];
+            const newItem = { ...oldItem, [propName]: !oldItem[propName] };
 
-            this.setState(({ todoData }) => {
-                this.toggleProperty(todoData, id, propName).then(newData => {
-                    this.setState({
-                        todoData: newData
-                    });
-                }).catch(error => {
-                    console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
-                });
+            database.ref('tasks/' + id).update(newItem).catch((error) => {
+                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
             });
-
-            // this.setState(async ({ todoData }) => {
-            //     try {
-            //         const newData = await this.toggleProperty(todoData, id, propName);
-            //         this.setState({
-            //             todoData: newData
-            //         })
-            //     } catch (error) {
-            //         console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
-            //     }
-            // });
         }
 
         this.onToggleDeveloping = (id) => {
