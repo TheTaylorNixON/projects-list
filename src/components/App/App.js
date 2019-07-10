@@ -13,155 +13,158 @@ import './App.css';
 
 export default class App extends Component {
 
-    constructor() {
-        super();
+    constructor(props) {
+        super(props);
+        this.createTodoItem = this.createTodoItem.bind(this);
+        this.onDataChange = this.onDataChange.bind(this);
+        this.searchItem = this.searchItem.bind(this);
+        this.filter = this.filter.bind(this);
+        this.deleteItem = this.deleteItem.bind(this);
+        this.addItem = this.addItem.bind(this);
+        this.updateTask = this.updateTask.bind(this);
+        this.onToggleDeveloping = this.onToggleDeveloping.bind(this);
+        this.onToggleDone = this.onToggleDone.bind(this);
+        this.onSearchChange = this.onSearchChange.bind(this);
+        this.onFilterChange = this.onFilterChange.bind(this);
 
-        this.createTodoItem = (label) => {
-            return {
-                done: false,
-                inDeveloping: false,
-                label
-            };
-        };
-
-        this.componentDidMount = () => {
-            const tasksRef = database.ref().child("tasks");
-            const startKey = tasksRef.push().key;
-
-            tasksRef.once('value').then(snapshot => {
-                this.onDataChange(snapshot, 'app_start');
-            });
-
-            tasksRef.orderByKey().startAt(startKey).on('child_added', snapshot => {
-                this.onDataChange(snapshot, 'child_added');
-            });
-
-            tasksRef.on('child_changed', snapshot => {
-                this.onDataChange(snapshot, 'child_changed');
-            })
-
-            tasksRef.on('child_removed', snapshot => {
-                this.onDataChange(snapshot, 'child_removed');
-            })
-        }
 
         this.state = {
             todoData: {},
             term: '',
             filter: 'all'
         };
+    }
 
-        this.onDataChange = (snapshot, actionType) => {
-            if (snapshot) {
-                this.setState(({ todoData }) => {
-                    let newState;
+    componentDidMount() {
+        const tasksRef = database.ref().child("tasks");
+        const startKey = tasksRef.push().key;
 
-                    switch (actionType) {
-                        case 'app_start':
-                            return {
-                                todoData: snapshot.val()
-                            }
-                        case 'child_added':
-                        case 'child_changed':
-                            newState = { ...todoData, [snapshot.key]: snapshot.val() }
+        tasksRef.once('value').then(snapshot => {
+            this.onDataChange(snapshot, 'app_start');
+        });
 
-                            return {
-                                todoData: newState
-                            }
-                        case 'child_removed':
-                            newState = { ...todoData };
-                            delete newState[snapshot.key];
+        tasksRef.orderByKey().startAt(startKey).on('child_added', snapshot => {
+            this.onDataChange(snapshot, 'child_added');
+        });
 
-                            return {
-                                todoData: newState
-                            }
-                        default:
-                            return;
-                    }
+        tasksRef.on('child_changed', snapshot => {
+            this.onDataChange(snapshot, 'child_changed');
+        })
+
+        tasksRef.on('child_removed', snapshot => {
+            this.onDataChange(snapshot, 'child_removed');
+        })
+    }
+
+    createTodoItem(label) {
+        return {
+            done: false,
+            inDeveloping: false,
+            label
+        };
+    }
+
+    onDataChange(snapshot, actionType) {
+        if (snapshot.val()) {
+            this.setState(({ todoData }) => {
+                let newState;
+
+                switch (actionType) {
+                    case 'app_start':
+                        return {
+                            todoData: snapshot.val()
+                        }
+                    case 'child_added':
+                    case 'child_changed':
+                        newState = { ...todoData, [snapshot.key]: snapshot.val() }
+
+                        return {
+                            todoData: newState
+                        }
+                    case 'child_removed':
+                        newState = { ...todoData };
+                        delete newState[snapshot.key];
+
+                        return {
+                            todoData: newState
+                        }
+                    default:
+                        return;
+                }
+            });
+        }
+    }
+
+    searchItem(items, term) {
+        if (term.length === 0) {
+            return Object.keys(items);
+        }
+        return Object.keys(items).filter(key => {
+            return items[key].label.toLowerCase() === term.toLowerCase();
+        });
+    }
+
+    filter(keys, items, filter) {
+        let newItems = {};
+
+        switch (filter) {
+            case 'active':
+                keys.filter(key => !items[key].done).forEach(key => {
+                    newItems[key] = items[key];
                 });
-            }
+                return newItems;
+            case 'done':
+                keys.filter(key => items[key].done).forEach(key => {
+                    newItems[key] = items[key];
+                });
+                return newItems;
+            default:    // case 'all'
+                keys.forEach(key => newItems[key] = items[key]);
+                return newItems;
         }
+    }
 
-        this.searchItem = (items, term) => {
-            if (term.length === 0) {
-                return Object.keys(items);
-            }
-            return Object.keys(items).filter(key => {
-                return items[key].label.toLowerCase() === term.toLowerCase();
-            });
-        }
+    deleteItem(id) {
+        database.ref('tasks/' + id).remove();
+    }
 
-        this.filter = (keys, items, filter) => {
-            let newItems = {};
+    addItem(text) {
+        const newChildRef = database.ref('tasks').push();
+        const newItem = this.createTodoItem(text);
 
-            switch (filter) {
-                case 'active':
-                    keys.filter(key => !items[key].done).forEach(key => {
-                        newItems[key] = items[key];
-                    });
-                    return newItems;
-                case 'done':
-                    keys.filter(key => items[key].done).forEach(key => {
-                        newItems[key] = items[key];
-                    });
-                    return newItems;
-                default:    // case 'all'
-                    keys.forEach(key => newItems[key] = items[key]);
-                    return newItems;
-            }
-        }
+        newChildRef.set(newItem).catch((error) => {
+            console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
+        });
+    }
 
-        this.deleteItem = (id) => {
-            database.ref('tasks/' + id).remove();
-        };
+    updateTask (id, propName) {
+        const { todoData } = this.state;
+        const oldItem = todoData[id];
+        const newItem = { ...oldItem, [propName]: !oldItem[propName] };
 
-        this.addItem = (text) => {
-            const newChildRef = database.ref('tasks').push();
-            const newItem = this.createTodoItem(text);
+        database.ref('tasks/' + id).update(newItem).catch((error) => {
+            console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
+        });
+    }
 
-            newChildRef.set(newItem).catch((error) => {
-                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
-            });
-        };
+    onToggleDeveloping(id) {
+        this.updateTask(id, 'inDeveloping');
+    }
 
-        this.toggleProperty = (todoData, id, propName) => {
-            const oldItem = todoData[id];
-            const newItem = { ...oldItem, [propName]: !oldItem[propName] };
+    onToggleDone(id) {
+        this.updateTask(id, 'done');
+    }
 
-            database.ref('tasks/' + id).update(newItem).catch((error) => {
-                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
-            });
-        }
+    onSearchChange(term) {
+        this.setState({
+            term: term
+        });
+    }
 
-        this.updateTask = (id, propName) => {
-            const { todoData } = this.state;
-            const oldItem = todoData[id];
-            const newItem = { ...oldItem, [propName]: !oldItem[propName] };
-
-            database.ref('tasks/' + id).update(newItem).catch((error) => {
-                console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
-            });
-        }
-
-        this.onToggleDeveloping = (id) => {
-            this.updateTask(id, 'inDeveloping');
-        }
-
-        this.onToggleDone = (id) => {
-            this.updateTask(id, 'done');
-        }
-
-        this.onSearchChange = (term) => {
-            this.setState({
-                term: term
-            });
-        }
-
-        this.onFilterChange = (filter) => {
-            this.setState({
-                filter: filter
-            });
-        }
+    onFilterChange(filter) {
+        this.setState({
+            filter: filter
+        });
     }
 
     render() {
