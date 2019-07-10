@@ -1,8 +1,22 @@
-const inc = () => ({ type: 'INC' });
+let nextTodoId = 0
+export const addTodo = text => ({
+    type: 'ADD_TODO',
+    id: nextTodoId++,
+    text
+})
 
-const dec = () => ({ type: 'DEC' });
+export const setVisibilityFilter = filter => ({
+    type: 'SET_VISIBILITY_FILTER',
+    filter
+})
 
-export {
-    inc,
-    dec
+export const toggleTodo = id => ({
+    type: 'TOGGLE_TODO',
+    id
+})
+
+export const VisibilityFilters = {
+    SHOW_ALL: 'SHOW_ALL',
+    SHOW_COMPLETED: 'SHOW_COMPLETED',
+    SHOW_ACTIVE: 'SHOW_ACTIVE'
 }

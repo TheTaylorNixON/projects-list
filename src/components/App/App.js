@@ -136,7 +136,7 @@ export default class App extends Component {
         });
     }
 
-    updateTask (id, propName) {
+    updateTask(id, propName) {
         const { todoData } = this.state;
         const oldItem = todoData[id];
         const newItem = { ...oldItem, [propName]: !oldItem[propName] };
@@ -156,13 +156,13 @@ export default class App extends Component {
 
     onSearchChange(term) {
         this.setState({
-            term: term
+            term
         });
     }
 
     onFilterChange(filter) {
         this.setState({
-            filter: filter
+            filter
         });
     }
 
