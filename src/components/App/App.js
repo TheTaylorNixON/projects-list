@@ -27,7 +27,6 @@ export default class App extends Component {
         this.onSearchChange = this.onSearchChange.bind(this);
         this.onFilterChange = this.onFilterChange.bind(this);
 
-
         this.state = {
             todoData: {},
             term: '',

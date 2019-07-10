@@ -1,12 +1,8 @@
-const reducer = (state, action) => {
-    switch (action.type) {
-        case '':
-            
-            return action.payload;
-    
-        default:
-            return state;
-    }
-}
+import { combineReducers } from 'redux'
+import todos from './todos'
+import visibilityFilter from './visibilityFilter'
 
-export default reducer;
+export default combineReducers({
+    todos,
+    visibilityFilter
+})
