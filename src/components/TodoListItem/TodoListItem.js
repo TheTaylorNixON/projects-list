@@ -24,6 +24,7 @@ const TodoListItem = (props) => {
 
             <button onClick={onToggleDeveloping} type="button" className="btn btn-outline-success btn-sm float-right">
                 <i className="fa fa-exclamation" />
+                {/* <i className="fa fa-plus" /> */}
             </button>
 
             <button onClick={onDeleted} type="button" className="btn btn-outline-danger btn-sm float-right">
