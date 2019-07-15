@@ -1,3 +1,8 @@
+export const addProject = (value) => ({
+    type: 'ADD_PROJECT',
+    payload: value
+})
+
 export const addTodo = (value, id) => ({
     type: 'ADD_TASK',
     id,

@@ -1,11 +1,14 @@
 import React, { Component } from 'react'
 
+import { connect } from 'react-redux'
+import { addProject } from '../../actions'
+
 import ProjectAddForm from '../ProjectAddForm';
 import ProjectsListItem from '../ProjectsListItem';
 import './ProjectsList.css';
 
 
-export default class ProjectsList extends Component {
+class ProjectsList extends Component {
 
     // TODO add ids(keys)
     state = {
@@ -13,15 +16,16 @@ export default class ProjectsList extends Component {
     }
 
     onProjectAdded = (label) => {
-        this.setState(({projects}) => {
-            return {
-                projects: [... projects, label]
-            }
-        })
+        dispatch(addProject(label));
+        // this.setState(({ projects }) => {
+        //     return {
+        //         projects: [... projects, label]
+        //     }
+        // })
     }
 
     render() {
-        const el = this.state.projects.map((label) => {
+        const project = this.state.projects.map((label) => {
             return (
                 <ProjectsListItem key={label} label={label} />
             )
@@ -31,15 +35,11 @@ export default class ProjectsList extends Component {
             <div>
                 <ProjectAddForm onProjectAdded={this.onProjectAdded} />
                 <ul className="nav flex-column">
-                    {el}
+                    { project }
                 </ul>
             </div>
-            // <ul className="list-group list-group-item-action btn-outline-secondary">
-            //     {el}
-            // </ul>
-            // <ul className="nav flex-column">
-            //     {el}
-            // </ul>
         )
     }
 }
+
+export default connect()(ProjectsList);

@@ -6,7 +6,6 @@ import './ProjectAddForm.css';
 export default class ProjectAddForm extends Component {
 
     state = {
-        input: false,
         label: ''
     }
 
@@ -22,7 +21,7 @@ export default class ProjectAddForm extends Component {
         this.props.onProjectAdded(this.state.label);
         this.setState({
             label: ''
-        })
+        });
     }
 
     render() {
