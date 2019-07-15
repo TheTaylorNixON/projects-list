@@ -7,10 +7,21 @@ import './ProjectsList.css';
 
 export default class ProjectsList extends Component {
 
+    // TODO add ids(keys)
+    state = {
+        projects: []
+    }
+
+    onProjectAdded = (label) => {
+        this.setState(({projects}) => {
+            return {
+                projects: [... projects, label]
+            }
+        })
+    }
 
     render() {
-        const arr = ['smtext1', 'smtext2', 'smtext3', 'smtext4', 'smtext5'];
-        const el = arr.map((label) => {
+        const el = this.state.projects.map((label) => {
             return (
                 <ProjectsListItem key={label} label={label} />
             )
@@ -18,7 +29,7 @@ export default class ProjectsList extends Component {
 
         return (
             <div>
-                <ProjectAddForm />
+                <ProjectAddForm onProjectAdded={this.onProjectAdded} />
                 <ul className="nav flex-column">
                     {el}
                 </ul>

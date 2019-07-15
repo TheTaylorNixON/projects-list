@@ -19,11 +19,10 @@ export default class ProjectAddForm extends Component {
 
     onSubmit = (e) => {
         e.preventDefault();
-        this.setState(({ input }) => {
-            return {
-                input: !input
-            }
-        });
+        this.props.onProjectAdded(this.state.label);
+        this.setState({
+            label: ''
+        })
     }
 
     render() {
