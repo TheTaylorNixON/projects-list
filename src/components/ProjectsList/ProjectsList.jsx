@@ -16,7 +16,14 @@ class ProjectsList extends Component {
     }
 
     onProjectAdded = (label) => {
-        dispatch(addProject(label));
+        // const changeState = (label) => {
+        //     return {
+        //         type: 'ADD_PROJECT',
+        //         payload: label
+        //     }
+        // }
+        // this.props.dispatch(changeState(label));
+        this.props.dispatch(addProject(label));
         // this.setState(({ projects }) => {
         //     return {
         //         projects: [... projects, label]
@@ -35,7 +42,7 @@ class ProjectsList extends Component {
             <div>
                 <ProjectAddForm onProjectAdded={this.onProjectAdded} />
                 <ul className="nav flex-column">
-                    { project }
+                    {project}
                 </ul>
             </div>
         )
