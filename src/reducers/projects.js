@@ -1,8 +1,6 @@
 const initialState = [];
 
 const projects = (state = initialState, action) => {
-    console.log(state);
-    console.log(action);
     switch (action.type) {
         case 'ADD_PROJECT':
             return {
