@@ -6,18 +6,17 @@ import App from './components/App';
 import rootReducer from './reducers';
 
 import { addProject } from './actions';
-import projects from './reducers/projects';
+import { bindActionCreators } from 'redux';
 
-// const store = createStore(rootReducer);
-const store = createStore(projects);
+const store = createStore(rootReducer);
 store.subscribe(() => {
     console.log(store.getState());
 })
 
-console.log(addProject('newPr'));
+store.dispatch(addProject({ key1: 'new Project1' }));
+store.dispatch(addProject({ key2: 'new Project2' }));
 
-store.dispatch(addProject('newPr'));
-store.dispatch(addProject('newPr2'));
+console.log(bindActionCreators(addProject, store.dispatch)({ key3: 'newProject3' }));
 
 render(
     <Provider store={store}>

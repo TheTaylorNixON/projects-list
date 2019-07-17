@@ -1,15 +1,12 @@
-const initialState = {
-    projects: [],
-    todos: {}
-};
+const initialState = {};
 
 const projects = (state = initialState, action) => {
     switch (action.type) {
         case 'ADD_PROJECT':
-        return {
-            ...state,
-            projects: [...state.projects, action.payload]
-        }
+            return {
+                ...state,
+                ...action.payload
+            }
 
         default:
             return state

@@ -9,7 +9,8 @@ import ProjectsListItem from '../ProjectsListItem';
 import './ProjectsList.css';
 
 const mapStateToProps = (state) => ({
-    projects: state.projects
+    // projects: state.projects
+    state
 });
 
 const mapActionsToProps = (dispatch) => ({
@@ -23,8 +24,12 @@ class ProjectsList extends Component {
         projects: []
     }
 
+    componentDidMount = () => {
+        console.log(this.props);
+    }
+
     onProjectAdded = (label) => {
-        this.props.dispatch(addProject(label));
+        this.props.addProject({ key555: label });
         // const changeState = (label) => {
         //     return {
         //         type: 'ADD_PROJECT',
