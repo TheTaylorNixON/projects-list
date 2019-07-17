@@ -5,13 +5,19 @@ import { Provider } from 'react-redux';
 import App from './components/App';
 import rootReducer from './reducers';
 
-const store = createStore(rootReducer);
-store.subscribe((store) => {
+import { addProject } from './actions';
+import projects from './reducers/projects';
+
+// const store = createStore(rootReducer);
+const store = createStore(projects);
+store.subscribe(() => {
     console.log(store.getState());
 })
-console.log(store.subscribe);
-console.log(store);
-console.log(store.getState());
+
+console.log(addProject('newPr'));
+
+store.dispatch(addProject('newPr'));
+store.dispatch(addProject('newPr2'));
 
 render(
     <Provider store={store}>
