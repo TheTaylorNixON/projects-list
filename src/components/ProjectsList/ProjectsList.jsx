@@ -9,12 +9,13 @@ import ProjectsListItem from '../ProjectsListItem';
 import './ProjectsList.css';
 
 const mapStateToProps = (state) => ({
-    // projects: state.projects
-    state
+    projects: state.projects
+    // state
 });
 
-const mapActionsToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
     addProject: bindActionCreators(addProject, dispatch)
+    // return bindActionCreators(addProject, dispatch);
 });
 
 class ProjectsList extends Component {
@@ -26,6 +27,7 @@ class ProjectsList extends Component {
 
     componentDidMount = () => {
         console.log(this.props);
+        console.log(this.props.projects);
     }
 
     onProjectAdded = (label) => {
@@ -63,4 +65,5 @@ class ProjectsList extends Component {
     }
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(ProjectsList);
+// export default connect(mapStateToProps, addProject)(ProjectsList);
+export default connect(mapStateToProps, mapDispatchToProps)(ProjectsList);
