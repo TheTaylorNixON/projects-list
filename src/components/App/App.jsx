@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import ProjectsList from '../ProjectsList';
+import ProjectsListContainer from '../ProjectsList';
 import AppHeader from '../AppHeader';
 import SearchPanel from '../SearchPanel';
 import TodoList from '../TodoList';
@@ -178,7 +178,7 @@ export default class App extends Component {
                 {/* <div className="left-panel"> */}
                 <nav className="col-md-2 d-none d-md-block bg-light sidebar">
                     <div className="sidebar-sticky">
-                        <ProjectsList />
+                        <ProjectsListContainer />
                     </div>
                 </nav>
                 {/* <div className="main-panel"> */}

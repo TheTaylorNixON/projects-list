@@ -7,7 +7,7 @@ export default class ProjectsListItem extends Component {
         const { label } = this.props;
         return (
             <li className="nav-item">
-                <a href="#" className="nav-link">
+                <a href="/asd" className="nav-link">
                     {label}
                 </a>
                 {/* <button className="btn-default nav-link">

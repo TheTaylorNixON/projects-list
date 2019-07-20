@@ -11,12 +11,6 @@ import rootReducer from './store/reducers';
 // import { addProject } from './actions';
 
 const store = createStore(rootReducer);
-store.subscribe(() => {
-    console.log(store.getState());
-})
-
-console.log(store);
-console.log(store.getState());
 
 // store.dispatch(addProject({ key1: 'new Project1' }));
 // store.dispatch(addProject({ key2: 'new Project2' }));

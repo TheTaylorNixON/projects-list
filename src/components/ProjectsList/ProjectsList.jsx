@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
 
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { addProject } from '../../store/projects/actions';
-
-import database from '../../services/firebase';
-
 import ProjectAddForm from '../ProjectAddForm';
 import ProjectsListItem from '../ProjectsListItem';
 import './ProjectsList.css';
 
+import database from '../../services/firebase';
 
-class ProjectsList extends Component {
+
+export default class ProjectsList extends Component {
 
     componentDidMount = () => {
+        const { addProject } = this.props;
         const projectsRef = database.ref().child("projects");
-        const startKey = projectsRef.push().key;
+        // const startKey = projectsRef.push().key;
 
         projectsRef.once('value').then(snapshot => {
-            this.props.addProject(snapshot.val());
+            addProject(snapshot.val());
         });
 
         // tasksRef.orderByKey().startAt(startKey).on('child_added', snapshot => {
@@ -35,14 +32,22 @@ class ProjectsList extends Component {
     }
 
     onProjectAdded = (projectName) => {
+        const { addProject } = this.props;
         const newChildRef = database.ref('projects').push();
+        const newTasksRef = database.ref('tasks').push();
         const newProject = {
-            projectName
+            projectName,
+            [newTasksRef.key]: {
+                done: false,
+                inDeveloping: false,
+                label: 'taskLabel'
+            }
         }
+        console.log(newProject);
         newChildRef.set(newProject).catch((error) => {
             console.log(`Неудалось добавить проект. Ошибка: ${error}`);
         });
-        this.props.addProject({ [newChildRef.key]: newProject });
+        // addProject({ [newChildRef.key]: newProject });
     }
 
     render() {
@@ -61,15 +66,3 @@ class ProjectsList extends Component {
         )
     }
 }
-
-
-const mapStateToProps = (state) => ({
-    projects: state.projects
-});
-
-const mapDispatchToProps = (dispatch) => ({
-    addProject: bindActionCreators(addProject, dispatch)
-});
-
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProjectsList);
