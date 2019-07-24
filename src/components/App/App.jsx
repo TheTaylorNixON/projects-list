@@ -1,13 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import ProjectsListContainer from '../ProjectsList';
-import AppHeader from '../AppHeader';
+import AppHeaderContainer from '../AppHeader';
 import SearchPanel from '../SearchPanel';
 import TodoList from '../TodoList';
 import ItemStatusFilter from '../ItemStatusFilter';
-import ItemAddForm from '../ItemAddForm';
-
-import database from '../../services/firebase';
+import ItemAddFormContainer from '../ItemAddForm';
 
 import './App.css';
 
@@ -204,7 +202,8 @@ import './App.css';
 
 
 
-const App = ({ todos }) => {
+const App = (props) => {
+    const { todoCount, doneCount, visibleItems, onDeleted, onToggleDeveloping, onToggleDone } = props;
 
     return (
         <div className="container-fluid">
@@ -215,23 +214,20 @@ const App = ({ todos }) => {
             </nav>
             <main className="col-md-9 ml-sm-auto col-lg-10 px-4">
                 <div className="todo-app">
-                    {/* <AppHeader todo={todoCount} done={doneCount} /> */}
-                    <AppHeader />
+                    <AppHeaderContainer todo={todoCount} done={doneCount} />
                     <div className="top-panel d-flex">
-                        {/* <SearchPanel onSearchChange={this.onSearchChange} />
-                        <ItemStatusFilter filter={filter} onFilterChange={this.onFilterChange} /> */}
+                        {/* <SearchPanel onSearchChange={onSearchChange} /> */}
+                        {/* <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} /> */}
                         <SearchPanel />
                         <ItemStatusFilter />
                     </div>
-                    {/* <TodoList
+                    <TodoList
                         todos={visibleItems}
-                        onDeleted={(id) => this.deleteItem(id)}
-                        onToggleDeveloping={this.onToggleDeveloping}
-                        onToggleDone={this.onToggleDone}
-                    /> */}
-                    <TodoList />
-                    {/* <ItemAddForm onItemAdded={this.addItem} /> */}
-                    <ItemAddForm />
+                        onDeleted={onDeleted}
+                        onToggleDeveloping={onToggleDeveloping}
+                        onToggleDone={onToggleDone}
+                    />
+                    <ItemAddFormContainer />
                 </div>
             </main>
         </div>

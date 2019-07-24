@@ -1,3 +1,3 @@
-import ItemAddForm from './ItemAddForm';
+import ItemAddFormContainer from './ItemAddFormContainer';
 
-export default ItemAddForm;
+export default ItemAddFormContainer;
