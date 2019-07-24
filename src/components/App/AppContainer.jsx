@@ -122,14 +122,10 @@ class AppContainer extends Component {
             <App
                 todoCount={todoCount}
                 doneCount={doneCount}
-                onSearchChange={this.onSearchChange}
-                filter={filter}
-                onFilterChange={this.onFilterChange}
                 visibleItems={visibleItems}
                 onDeleted={(id) => this.deleteItem(id)}
                 onToggleDeveloping={this.onToggleDeveloping}
                 onToggleDone={this.onToggleDone}
-                onItemAdded={this.addItem}
             />
         );
     }

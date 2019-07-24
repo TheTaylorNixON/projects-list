@@ -1,15 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
 
 import AppHeader from './AppHeader';
 
 import { connect } from 'react-redux';
 
-class AppHeaderContainer extends Component {
-    render() {
-        return (
-            <AppHeader todo={this.props.todo} done={this.props.done} />
-        )
-    }
+const AppHeaderContainer = (props) => {
+    const { todo, done } = props;
+    return (
+        <AppHeader todo={todo} done={done} />
+    )
 }
 
 

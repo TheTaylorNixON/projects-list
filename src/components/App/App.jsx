@@ -5,7 +5,7 @@ import AppHeaderContainer from '../AppHeader';
 import SearchPanel from '../SearchPanel';
 import TodoList from '../TodoList';
 import ItemStatusFilter from '../ItemStatusFilter';
-import ItemAddForm from '../ItemAddForm';
+import ItemAddFormContainer from '../ItemAddForm';
 
 import './App.css';
 
@@ -203,8 +203,7 @@ import './App.css';
 
 
 const App = (props) => {
-    const { todoCount, doneCount, onSearchChange, filter, onFilterChange,
-        visibleItems, onDeleted, onToggleDeveloping, onToggleDone, onItemAdded } = props;
+    const { todoCount, doneCount, visibleItems, onDeleted, onToggleDeveloping, onToggleDone } = props;
 
     return (
         <div className="container-fluid">
@@ -217,8 +216,10 @@ const App = (props) => {
                 <div className="todo-app">
                     <AppHeaderContainer todo={todoCount} done={doneCount} />
                     <div className="top-panel d-flex">
-                        <SearchPanel onSearchChange={onSearchChange} />
-                        <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} />
+                        {/* <SearchPanel onSearchChange={onSearchChange} /> */}
+                        {/* <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} /> */}
+                        <SearchPanel />
+                        <ItemStatusFilter />
                     </div>
                     <TodoList
                         todos={visibleItems}
@@ -226,7 +227,7 @@ const App = (props) => {
                         onToggleDeveloping={onToggleDeveloping}
                         onToggleDone={onToggleDone}
                     />
-                    <ItemAddForm onItemAdded={onItemAdded} />
+                    <ItemAddFormContainer />
                 </div>
             </main>
         </div>
