@@ -29,13 +29,10 @@ class AppContainer extends Component {
         });
 
         tasksRef.once('value').then(snapshot => {
-            console.log(snapshot.val());
             this.setState({
                 todoData: snapshot.val()
             })
-        }).then(() => {
-            console.log(this.state);
-        })
+        });
     }
 
     searchItem = (items, term) => {
@@ -115,8 +112,6 @@ class AppContainer extends Component {
         const visibleItems = this.filter(this.searchItem(todoData, term), todoData, filter);
         const doneCount = Object.keys(todoData).filter(key => todoData[key].done).length;
         const todoCount = Object.keys(todoData).length - doneCount;
-
-        console.log(this.props.projects);
 
         return (
             <App

@@ -11,18 +11,24 @@ class TodoListContainer extends Component {
 
 
     render() {
+        console.log(this.props);
         const { todos } = this.props;
+        console.log(todos);
+        console.log(todos['-LkFzDz8p8ONcq-UIWSf']);
+        const td = todos['-LkFzDz8p8ONcq-UIWSf'] ? todos['-LkFzDz8p8ONcq-UIWSf'].tasks : {};
 
-        <TodoList todos={todos} />
+        return (
+            <TodoList todos={td} />
+        )
     }
 }
 
 
-mapStateToProps = state => ({
-    todos: state.projects[key].todos
+const mapStateToProps = state => ({
+    todos: state.projects
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
     onDeleted: bindActionCreators(dispatch),
     onToggleDone: bindActionCreators(dispatch),
     onToggleDeveloping: bindActionCreators(dispatch)

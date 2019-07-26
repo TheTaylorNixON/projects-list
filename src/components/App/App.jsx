@@ -3,7 +3,7 @@ import React from 'react';
 import ProjectsListContainer from '../ProjectsList';
 import AppHeaderContainer from '../AppHeader';
 import SearchPanel from '../SearchPanel';
-import TodoList from '../TodoList';
+import TodoListContainer from '../TodoList';
 import ItemStatusFilter from '../ItemStatusFilter';
 import ItemAddFormContainer from '../ItemAddForm';
 
@@ -216,12 +216,10 @@ const App = (props) => {
                 <div className="todo-app">
                     <AppHeaderContainer todo={todoCount} done={doneCount} />
                     <div className="top-panel d-flex">
-                        {/* <SearchPanel onSearchChange={onSearchChange} /> */}
-                        {/* <ItemStatusFilter filter={filter} onFilterChange={onFilterChange} /> */}
                         <SearchPanel />
                         <ItemStatusFilter />
                     </div>
-                    <TodoList
+                    <TodoListContainer
                         todos={visibleItems}
                         onDeleted={onDeleted}
                         onToggleDeveloping={onToggleDeveloping}
