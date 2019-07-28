@@ -1,44 +1,47 @@
 import React from 'react';
 import ProjectsList from './ProjectsList';
+import ProjectAddForm from '../ProjectAddForm';
 
 import { connect } from 'react-redux';
-import { addProject } from '../../store/projects/actions';
+import { addProject, selectProject } from '../../store/projects/actions';
 
 import database from '../../services/firebase';
 
 
-const ProjectsListContainer = ({ addProject, projects }) => {
+const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
 
     const onProjectAdded = (projectName) => {
         const newChildRef = database.ref('projects').push();
         const newProject = {
             projectName
         }
+
         newChildRef.set(newProject).then(() => {
-            addProject({ [newChildRef.key]: newProject });
+            addProject(newProject);
         }).catch((error) => {
             console.log(`Неудалось добавить проект. Ошибка: ${error}`);
         });
     }
 
     const onProjectClicked = (key) => {
-        console.log(key);
-        console.log(projects[key]);
+        selectProject(key);
     }
 
     return (
-        <ProjectsList onProjectAdded={onProjectAdded}
-            onProjectClicked={onProjectClicked}
-            projects={projects} />
+        <div>
+            <ProjectAddForm onProjectAdded={onProjectAdded} />
+            <ProjectsList onProjectClicked={onProjectClicked} projects={projects} />
+        </div>
     )
 }
 
 const mapStateToProps = ({ projects }) => ({
-    projects
+    projects: projects.projectsData
 });
 
 const mapDispatchToProps = {
-    addProject
+    addProject,
+    selectProject
 }
 
 // const mapDispatchToProps = dispatch => {

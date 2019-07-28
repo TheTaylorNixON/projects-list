@@ -20,19 +20,31 @@ class AppContainer extends Component {
 
     componentDidMount() {
         const { startApp } = this.props;
-        const projectsRef = database.ref().child("projects");
-        const tasksRef = database.ref().child("tasks");
+        const projectsRef = database.ref();
 
-        projectsRef.once('value').then(snapshot => {
-            console.log(snapshot.val());
-            startApp(snapshot.val());
-        });
+        projectsRef.once('value').then((snapshot) => {
+            const val = snapshot.val();
 
-        tasksRef.once('value').then(snapshot => {
-            this.setState({
-                todoData: snapshot.val()
+            startApp({
+                projectsData: val.projects,
+                selectedProject: val.selectedProject
             })
         });
+
+        // const { startApp } = this.props;
+        // const projectsRef = database.ref().child("projects");
+        // const tasksRef = database.ref().child("tasks");
+
+        // projectsRef.once('value').then(snapshot => {
+        //     console.log(snapshot.val());
+        //     startApp(snapshot.val());
+        // });
+
+        // tasksRef.once('value').then(snapshot => {
+        //     this.setState({
+        //         todoData: snapshot.val()
+        //     })
+        // });
     }
 
     searchItem = (items, term) => {

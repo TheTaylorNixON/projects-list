@@ -1,31 +1,29 @@
 import React, { Component } from 'react';
 
+import TodoList from './TodoList';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import TodoList from './TodoList';
 
 
 class TodoListContainer extends Component {
 
-
-
     render() {
-        console.log(this.props);
-        const { todos } = this.props;
-        console.log(todos);
-        console.log(todos['-LkFzDz8p8ONcq-UIWSf']);
-        const td = todos['-LkFzDz8p8ONcq-UIWSf'] ? todos['-LkFzDz8p8ONcq-UIWSf'].tasks : {};
+        const { projects, selectedProject } = this.props;
+
+        const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
+        const todos = projects[selected] ? projects[selected].tasks : {};
 
         return (
-            <TodoList todos={td} />
+            <TodoList todos={todos || {}} />
         )
     }
 }
 
 
-const mapStateToProps = state => ({
-    todos: state.projects
+const mapStateToProps = ({ projects }) => ({
+    projects: projects.projectsData,
+    selectedProject: projects.selectedProject
 });
 
 const mapDispatchToProps = dispatch => ({
