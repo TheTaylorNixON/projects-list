@@ -1,3 +1,3 @@
-import TodoList from './TodoList';
+import TodoListContainer from './TodoListContainer';
 
-export default TodoList;
+export default TodoListContainer;

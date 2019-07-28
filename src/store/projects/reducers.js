@@ -1,10 +1,19 @@
-import { ADD_PROJECT, START_APP } from './actions';
+import { ADD_PROJECT, START_APP, SELECT_PROJECT } from './actions';
 
 
-const defaultState = {}
+const defaultState = {
+    projectsData: {},
+    selectedProject: '-LkFzDz8p8ONcq-UIWSf'
+}
 
 export const projectsReducer = (state = defaultState, action) => {
     switch (action.type) {
+        case SELECT_PROJECT:
+            return {
+                ...state,
+                selectedProject: action.payload
+            }
+
         case ADD_PROJECT:
             return {
                 ...state,

@@ -1,28 +1,32 @@
 import React, { Component } from 'react';
 
+import TodoList from './TodoList';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-
-import TodoList from './TodoList';
 
 
 class TodoListContainer extends Component {
 
-
-
     render() {
-        const { todos } = this.props;
+        const { projects, selectedProject } = this.props;
 
-        <TodoList todos={todos} />
+        const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
+        const todos = projects[selected] ? projects[selected].tasks : {};
+
+        return (
+            <TodoList todos={todos || {}} />
+        )
     }
 }
 
 
-mapStateToProps = state => ({
-    todos: state.projects[key].todos
+const mapStateToProps = ({ projects }) => ({
+    projects: projects.projectsData,
+    selectedProject: projects.selectedProject
 });
 
-mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = dispatch => ({
     onDeleted: bindActionCreators(dispatch),
     onToggleDone: bindActionCreators(dispatch),
     onToggleDeveloping: bindActionCreators(dispatch)

@@ -1,13 +1,12 @@
 import React from 'react';
 
-import ProjectAddForm from '../ProjectAddForm';
 import ProjectsListItem from '../ProjectsListItem';
 import './ProjectsList.css';
 
 
 const ProjectsList = (props) => {
 
-    const { projects, onProjectAdded, onProjectClicked } = props;
+    const { projects, onProjectClicked } = props;
     const project = Object.keys(projects).map((key) => {
         return <ProjectsListItem
             key={key}
@@ -17,12 +16,9 @@ const ProjectsList = (props) => {
     });
 
     return (
-        <div>
-            <ProjectAddForm onProjectAdded={onProjectAdded} />
-            <ul className="nav flex-column">
-                {project}
-            </ul>
-        </div>
+        <ul className="nav flex-column">
+            {project}
+        </ul>
     )
 }
 
