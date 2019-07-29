@@ -3,6 +3,7 @@ import { projectsReducer } from "./projects/reducers";
 import { tasksReducer } from './tasks/reducers';
 
 
+// const rootReducer = projectsReducer;
 const rootReducer = combineReducers({
     projects: projectsReducer,
     tasks: tasksReducer
