@@ -4,12 +4,30 @@ import { connect } from 'react-redux';
 
 import ItemAddForm from './ItemAddForm';
 
+import { addTask } from '../../store/projects/actions';
+
+import database from '../../services/firebase';
+
 
 class ItemAddFormContainer extends Component {
 
-    onItemAdded = (text) => {
-        // dispatch();
-        console.log(text);
+
+    createTodoItem = (label, projectId) => ({
+        done: false,
+        inDeveloping: false,
+        projectId,
+        label
+    });
+
+    onItemAdded = (label) => {
+        const { selectedProject, addTask } = this.props;
+        const item = this.createTodoItem(label, selectedProject);
+        const newChildRef = database.ref('tasks').push();
+
+        newChildRef.set(item).catch((error) => {
+            console.log(`Неудалось добавить проект. Ошибка: ${error}`);
+        });
+        addTask({ [newChildRef.key]: item });
     }
 
     render() {
@@ -20,9 +38,14 @@ class ItemAddFormContainer extends Component {
 }
 
 
-const mapStateToProps = state => ({
-    todoData: state.tasks.todoData
+const mapStateToProps = ({ tasks, selectedProject }) => ({
+    tasks,
+    selectedProject
 });
 
+const mapDispatchToProps = {
+    addTask
+}
 
-export default connect(mapStateToProps)(ItemAddFormContainer);
+
+export default connect(mapStateToProps, mapDispatchToProps)(ItemAddFormContainer);

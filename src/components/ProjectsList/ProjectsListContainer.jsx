@@ -12,13 +12,12 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
 
     const onProjectAdded = (projectName) => {
         const newChildRef = database.ref('projects').push();
-        const newProject = {
-            projectName
-        }
+        const projectId = newChildRef.key;
 
-        newChildRef.set(newProject).then(() => {
-            addProject(newProject);
-        }).catch((error) => {
+        addProject({ [projectId]: projectName });
+        selectProject(projectId);
+
+        newChildRef.set(projectName).catch((error) => {
             console.log(`Неудалось добавить проект. Ошибка: ${error}`);
         });
     }
@@ -36,19 +35,13 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
 }
 
 const mapStateToProps = ({ projects }) => ({
-    projects: projects.projectsData
+    projects
 });
 
 const mapDispatchToProps = {
     addProject,
     selectProject
 }
-
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         addProject: bindActionCreators(addProject, dispatch)
-//     }
-// }
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectsListContainer); 

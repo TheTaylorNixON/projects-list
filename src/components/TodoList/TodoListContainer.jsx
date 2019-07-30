@@ -3,34 +3,50 @@ import React, { Component } from 'react';
 import TodoList from './TodoList';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
+import { deleteTask, toggleDoneTask } from '../../store/projects/actions';
 
 
 class TodoListContainer extends Component {
 
     render() {
-        const { projects, selectedProject } = this.props;
+        const { projects, tasks, selectedProject, deleteTask, toggleDoneTask } = this.props;
 
         const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
-        const todos = projects[selected] ? projects[selected].tasks : {};
+
+        const todos = {};
+        for (let key in tasks) {
+            if (tasks[key].projectId === selected) {
+                todos[key] = tasks[key];
+            }
+        }
 
         return (
-            <TodoList todos={todos || {}} />
+            <TodoList todos={todos}
+                onDeleted={deleteTask}
+                onToggleDone={toggleDoneTask}
+            />
         )
     }
 }
 
 
-const mapStateToProps = ({ projects }) => ({
-    projects: projects.projectsData,
-    selectedProject: projects.selectedProject
+const mapStateToProps = ({ projects, tasks, selectedProject }) => ({
+    projects,
+    tasks,
+    selectedProject
 });
 
-const mapDispatchToProps = dispatch => ({
-    onDeleted: bindActionCreators(dispatch),
-    onToggleDone: bindActionCreators(dispatch),
-    onToggleDeveloping: bindActionCreators(dispatch)
-});
+const mapDispatchToProps = {
+    deleteTask,
+    toggleDoneTask
+};
+
+// const mapDispatchToProps = dispatch => ({
+//     deleteTask: bindActionCreators(dispatch),
+//     onToggleDone: bindActionCreators(dispatch),
+//     onToggleDeveloping: bindActionCreators(dispatch)
+// });
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(TodoListContainer);
