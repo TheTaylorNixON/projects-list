@@ -3,17 +3,19 @@ import React, { Component } from 'react';
 import TodoList from './TodoList';
 
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+
 import { deleteTask, toggleDoneTask } from '../../store/projects/actions';
 
 
 class TodoListContainer extends Component {
 
     render() {
-        const { projects, selectedProject, deleteTask, toggleDoneTask } = this.props;
+        const { projects, tasks, selectedProject, deleteTask, toggleDoneTask } = this.props;
 
         const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
-        const todos = projects[selected] ? projects[selected].tasks : {};
+        const todos = Object.keys(tasks).filter((key) => {
+            return tasks[key] = selected;
+        });
 
         return (
             <TodoList todos={todos || {}}
@@ -25,9 +27,10 @@ class TodoListContainer extends Component {
 }
 
 
-const mapStateToProps = ({ projects }) => ({
-    projects: projects.projectsData,
-    selectedProject: projects.selectedProject
+const mapStateToProps = ({ projects, tasks, selectedProject }) => ({
+    projects,
+    tasks,
+    selectedProject
 });
 
 const mapDispatchToProps = {

@@ -23,12 +23,13 @@ class AppContainer extends Component {
         const projectsRef = database.ref();
 
         projectsRef.once('value').then((snapshot) => {
-            const val = snapshot.val();
+            const { projects, tasks, selectedProject } = snapshot.val();
 
             startApp({
-                projectsData: val.projects,
-                selectedProject: val.selectedProject
-            })
+                projects,
+                tasks,
+                selectedProject
+            });
         });
 
         // const { startApp } = this.props;
@@ -144,7 +145,6 @@ const mapStateToProps = ({ projects }) => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    addProject: bindActionCreators(addProject, dispatch),
     startApp: bindActionCreators(startApp, dispatch)
 });
 

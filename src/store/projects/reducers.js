@@ -10,8 +10,9 @@ import {
 
 
 const defaultState = {
-    projectsData: {},
-    selectedProject: '-LkFzDz8p8ONcq-UIWSf'
+    projects: {},
+    tasks: {},
+    selectedProject: ''
 }
 
 export const projectsReducer = (state = defaultState, action) => {
@@ -25,7 +26,7 @@ export const projectsReducer = (state = defaultState, action) => {
         case ADD_PROJECT:
             return {
                 ...state,
-                ...action.payload
+                projects: action.payload
             }
 
         case START_APP:

@@ -17,7 +17,10 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
         }
 
         newChildRef.set(newProject).then(() => {
-            addProject(newProject);
+            console.log({[newChildRef]: newProject});
+            addProject({
+                [newChildRef]: newProject
+            });
         }).catch((error) => {
             console.log(`Неудалось добавить проект. Ошибка: ${error}`);
         });
@@ -36,19 +39,13 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
 }
 
 const mapStateToProps = ({ projects }) => ({
-    projects: projects.projectsData
+    projects
 });
 
 const mapDispatchToProps = {
     addProject,
     selectProject
 }
-
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         addProject: bindActionCreators(addProject, dispatch)
-//     }
-// }
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProjectsListContainer); 
