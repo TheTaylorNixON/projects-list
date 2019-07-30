@@ -12,16 +12,12 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
 
     const onProjectAdded = (projectName) => {
         const newChildRef = database.ref('projects').push();
-        const newProject = {
-            projectName
-        }
+        const projectId = newChildRef.key;
 
-        newChildRef.set(newProject).then(() => {
-            console.log({[newChildRef]: newProject});
-            addProject({
-                [newChildRef]: newProject
-            });
-        }).catch((error) => {
+        addProject({ [projectId]: projectName });
+        selectProject(projectId);
+
+        newChildRef.set(projectName).catch((error) => {
             console.log(`Неудалось добавить проект. Ошибка: ${error}`);
         });
     }

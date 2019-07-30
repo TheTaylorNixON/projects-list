@@ -23,13 +23,7 @@ class AppContainer extends Component {
         const projectsRef = database.ref();
 
         projectsRef.once('value').then((snapshot) => {
-            const { projects, tasks, selectedProject } = snapshot.val();
-
-            startApp({
-                projects,
-                tasks,
-                selectedProject
-            });
+            startApp(snapshot.val());
         });
 
         // const { startApp } = this.props;

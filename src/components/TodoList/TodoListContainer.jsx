@@ -13,12 +13,16 @@ class TodoListContainer extends Component {
         const { projects, tasks, selectedProject, deleteTask, toggleDoneTask } = this.props;
 
         const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
-        const todos = Object.keys(tasks).filter((key) => {
-            return tasks[key] = selected;
-        });
+
+        const todos = {};
+        for (let key in tasks) {
+            if (tasks[key].projectId === selected) {
+                todos[key] = tasks[key];
+            }
+        }
 
         return (
-            <TodoList todos={todos || {}}
+            <TodoList todos={todos}
                 onDeleted={deleteTask}
                 onToggleDone={toggleDoneTask}
             />

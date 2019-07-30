@@ -10,7 +10,7 @@ const ProjectsList = (props) => {
     const project = Object.keys(projects).map((key) => {
         return <ProjectsListItem
             key={key}
-            label={projects[key].projectName}
+            label={projects[key]}
             onProjectClicked={() => onProjectClicked(key)}
         />
     });

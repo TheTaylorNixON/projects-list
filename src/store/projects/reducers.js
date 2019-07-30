@@ -26,7 +26,10 @@ export const projectsReducer = (state = defaultState, action) => {
         case ADD_PROJECT:
             return {
                 ...state,
-                projects: action.payload
+                projects: {
+                    ...state.projects,
+                    ...action.payload
+                }
             }
 
         case START_APP:
@@ -38,16 +41,20 @@ export const projectsReducer = (state = defaultState, action) => {
         case ADD_TASK:
             return {
                 ...state,
-                projectsData: {
-                    ...state.projectsData,
-                    [state.selectedProject]: {
-                        ...state.projectsData[state.selectedProject],
-                        tasks: {
-                            ...state.projectsData[state.selectedProject].tasks,
-                            ...action.payload
-                        }
-                    }
+                tasks: {
+                    ...state.tasks,
+                    ...action.payload
                 }
+                // projectsData: {
+                //     ...state.projectsData,
+                //     [state.selectedProject]: {
+                //         ...state.projectsData[state.selectedProject],
+                //         tasks: {
+                //             ...state.projectsData[state.selectedProject].tasks,
+                //             ...action.payload
+                //         }
+                //     }
+                // }
             }
 
         case DELETE_TASK:

@@ -12,17 +12,22 @@ import database from '../../services/firebase';
 class ItemAddFormContainer extends Component {
 
 
-    createTodoItem = (label) => ({
+    createTodoItem = (label, projectId) => ({
         done: false,
         inDeveloping: false,
+        projectId,
         label
     });
 
     onItemAdded = (label) => {
-        const newChildRef = database.ref('projects').push();
-        const item = this.createTodoItem(label);
-        console.log({ [newChildRef.key]: item });
-        this.props.addTask({ [newChildRef.key]: item });
+        const { selectedProject, addTask } = this.props;
+        const item = this.createTodoItem(label, selectedProject);
+        const newChildRef = database.ref('tasks').push();
+
+        newChildRef.set(item).catch((error) => {
+            console.log(`Неудалось добавить проект. Ошибка: ${error}`);
+        });
+        addTask({ [newChildRef.key]: item });
     }
 
     render() {
@@ -33,8 +38,9 @@ class ItemAddFormContainer extends Component {
 }
 
 
-const mapStateToProps = state => ({
-    todoData: state.tasks.todoData
+const mapStateToProps = ({ tasks, selectedProject }) => ({
+    tasks,
+    selectedProject
 });
 
 const mapDispatchToProps = {

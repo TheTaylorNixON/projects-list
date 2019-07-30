@@ -1,6 +1,6 @@
-import { combineReducers } from "redux";
+// import { combineReducers } from "redux";
 import { projectsReducer } from "./projects/reducers";
-import { tasksReducer } from './tasks/reducers';
+// import { tasksReducer } from './tasks/reducers';
 
 
 const rootReducer = projectsReducer;
