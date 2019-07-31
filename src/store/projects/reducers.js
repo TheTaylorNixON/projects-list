@@ -4,18 +4,22 @@ import {
     SELECT_PROJECT,
     ADD_TASK,
     DELETE_TASK,
-    TOGGLE_DONE_TASK,
-    TOGGLE_DEVELOPING_TASK
+    TOGGLE_UPDATE_TASK,
+    SET_TERM,
+    SET_FILTER
 } from './actions';
 
 
 const defaultState = {
     projects: {},
     tasks: {},
-    selectedProject: ''
+    selectedProject: '',
+    filter: 'all',
+    term: ''
 }
 
 export const projectsReducer = (state = defaultState, action) => {
+
     switch (action.type) {
         case SELECT_PROJECT:
             return {
@@ -45,45 +49,36 @@ export const projectsReducer = (state = defaultState, action) => {
                     ...state.tasks,
                     ...action.payload
                 }
-                // projectsData: {
-                //     ...state.projectsData,
-                //     [state.selectedProject]: {
-                //         ...state.projectsData[state.selectedProject],
-                //         tasks: {
-                //             ...state.projectsData[state.selectedProject].tasks,
-                //             ...action.payload
-                //         }
-                //     }
-                // }
             }
 
         case DELETE_TASK:
-            const selected = state.selectedProject;
-            const taskId = action.payload;
-            const newState = Object.assign({}, state);
-            delete newState.projectsData[selected].tasks[taskId];
-
-            return {
-                ...newState
-            }
-
-        case TOGGLE_DONE_TASK:
-            const taskDone = state.projectsData[state.selectedProject].tasks[action.payload].done;
-
             return {
                 ...state,
-                projectsData: {
-                    ...state.projectsData,
-                    [state.selectedProject]: {
-                        ...state.projectsData[state.selectedProject],
-                        tasks: {
-                            [action.payload]: {
-                                ...state.projectsData[state.selectedProject].tasks[action.payload],
-                                done: !taskDone
-                            }
-                        }
-                    }
+                tasks: {
+                    ...state.tasks,
+                    ...action.payload
                 }
+            }
+
+        case TOGGLE_UPDATE_TASK:
+            return {
+                ...state,
+                tasks: {
+                    ...state.tasks,
+                    ...action.payload
+                }
+            }
+
+        case SET_TERM:
+            return {
+                ...state,
+                term: action.payload
+            }
+
+        case SET_FILTER:
+            return {
+                ...state,
+                filter: action.payload
             }
 
         default:

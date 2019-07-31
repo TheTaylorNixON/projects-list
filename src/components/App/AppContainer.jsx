@@ -23,7 +23,11 @@ class AppContainer extends Component {
         const projectsRef = database.ref();
 
         projectsRef.once('value').then((snapshot) => {
-            startApp(snapshot.val());
+            const appState = snapshot.val();
+            startApp({
+                ...appState,
+                selectedProject: Object.keys(appState.projects)[0]
+            });
         });
 
         // const { startApp } = this.props;
@@ -80,7 +84,7 @@ class AppContainer extends Component {
         const newItem = this.createTodoItem(text);
 
         newChildRef.set(newItem).catch((error) => {
-            console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
+            console.log(`Не удалось добавить задачу. Ошибка: ${error}`);
         });
     }
 
@@ -90,7 +94,7 @@ class AppContainer extends Component {
         const newItem = { ...oldItem, [propName]: !oldItem[propName] };
 
         database.ref('tasks/' + id).update(newItem).catch((error) => {
-            console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
+            console.log(`Не удалось обновить задачу. Ошибка: ${error}`);
         });
     }
 

@@ -25,7 +25,7 @@ class ItemAddFormContainer extends Component {
         const newChildRef = database.ref('tasks').push();
 
         newChildRef.set(item).catch((error) => {
-            console.log(`Неудалось добавить проект. Ошибка: ${error}`);
+            console.log(`Не удалось добавить проект. Ошибка: ${error}`);
         });
         addTask({ [newChildRef.key]: item });
     }
