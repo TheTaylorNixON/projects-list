@@ -132,7 +132,7 @@ import './App.css';
 //         const newItem = this.createTodoItem(text);
 
 //         newChildRef.set(newItem).catch((error) => {
-//             console.log(`Неудалось добавить задачу. Ошибка: ${error}`);
+//             console.log(`Не удалось добавить задачу. Ошибка: ${error}`);
 //         });
 //     }
 
@@ -142,7 +142,7 @@ import './App.css';
 //         const newItem = { ...oldItem, [propName]: !oldItem[propName] };
 
 //         database.ref('tasks/' + id).update(newItem).catch((error) => {
-//             console.log(`Неудалось обновить задачу. Ошибка: ${error}`);
+//             console.log(`Не удалось обновить задачу. Ошибка: ${error}`);
 //         });
 //     }
 

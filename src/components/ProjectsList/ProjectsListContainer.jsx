@@ -18,7 +18,7 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
         selectProject(projectId);
 
         newChildRef.set(projectName).catch((error) => {
-            console.log(`Неудалось добавить проект. Ошибка: ${error}`);
+            console.log(`Не удалось добавить проект. Ошибка: ${error}`);
         });
     }
 

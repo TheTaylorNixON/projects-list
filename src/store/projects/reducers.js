@@ -58,33 +58,45 @@ export const projectsReducer = (state = defaultState, action) => {
             }
 
         case DELETE_TASK:
-            const selected = state.selectedProject;
             const taskId = action.payload;
-            const newState = Object.assign({}, state);
-            delete newState.projectsData[selected].tasks[taskId];
-
-            return {
-                ...newState
-            }
-
-        case TOGGLE_DONE_TASK:
-            const taskDone = state.projectsData[state.selectedProject].tasks[action.payload].done;
+            const tasks = Object.assign({}, state.tasks);
+            delete tasks[taskId];
 
             return {
                 ...state,
-                projectsData: {
-                    ...state.projectsData,
-                    [state.selectedProject]: {
-                        ...state.projectsData[state.selectedProject],
-                        tasks: {
-                            [action.payload]: {
-                                ...state.projectsData[state.selectedProject].tasks[action.payload],
-                                done: !taskDone
-                            }
-                        }
+                tasks
+            }
+
+        case TOGGLE_DONE_TASK:
+            const id = action.payload;
+            const task = state.tasks[id];
+
+            return {
+                ...state,
+                tasks: {
+                    ...state.tasks,
+                    [id]: {
+                        ...state.tasks[id],
+                        done: !task.done
                     }
                 }
             }
+            // const taskDone = state.projectsData[state.selectedProject].tasks[action.payload].done;
+            // return {
+            //     ...state,
+            //     projectsData: {
+            //         ...state.projectsData,
+            //         [state.selectedProject]: {
+            //             ...state.projectsData[state.selectedProject],
+            //             tasks: {
+            //                 [action.payload]: {
+            //                     ...state.projectsData[state.selectedProject].tasks[action.payload],
+            //                     done: !taskDone
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
 
         default:
             return state;

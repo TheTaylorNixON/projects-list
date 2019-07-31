@@ -6,25 +6,37 @@ import { connect } from 'react-redux';
 
 import { deleteTask, toggleDoneTask } from '../../store/projects/actions';
 
+import database from '../../services/firebase';
+
 
 class TodoListContainer extends Component {
 
-    render() {
-        const { projects, tasks, selectedProject, deleteTask, toggleDoneTask } = this.props;
+    onDeleted = (taskId) => {
+        this.props.deleteTask(taskId);
+        database.ref('tasks/' + taskId).remove().catch((error) => {
+            console.log(`Не удалось удалить задачу. Ошибка: ${error}`);
+        });
+    }
 
-        const selected = selectedProject ? selectedProject : Object.keys(projects)[0];
+    onToggleDone = (taskId) => {
+        this.props.toggleDoneTask(taskId);
+    }
+
+    render() {
+        const { tasks, selectedProject, toggleDoneTask } = this.props;
 
         const todos = {};
         for (let key in tasks) {
-            if (tasks[key].projectId === selected) {
+            if (tasks[key].projectId === selectedProject) {
                 todos[key] = tasks[key];
             }
         }
 
         return (
             <TodoList todos={todos}
-                onDeleted={deleteTask}
-                onToggleDone={toggleDoneTask}
+                onDeleted={this.onDeleted}
+                onToggleDone={this.onToggleDone}
+                onToggleDeveloping={()=>{}}
             />
         )
     }
