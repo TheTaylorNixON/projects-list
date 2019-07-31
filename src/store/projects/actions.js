@@ -3,8 +3,9 @@ export const START_APP = 'START_APP';
 export const SELECT_PROJECT = 'SELECT_PROJECT';
 export const ADD_TASK = 'ADD_TASK';
 export const DELETE_TASK = 'DELETE_TASK';
-export const TOGGLE_DONE_TASK = 'TOGGLE_DONE';
-export const TOGGLE_DEVELOPING_TASK = 'TOGGLE_DEVELOPING';
+export const TOGGLE_UPDATE_TASK = 'TOGGLE_UPDATE_TASK';
+export const SET_TERM = 'SET_TERM';
+export const SET_FILTER = 'SET_FILTER';
 
 
 export const addProject = projectName => ({
@@ -32,12 +33,17 @@ export const deleteTask = taskId => ({
     payload: taskId
 });
 
-export const toggleDevelopingTask = taskId => ({
-    type: TOGGLE_DEVELOPING_TASK,
-    payload: taskId
+export const toggleUpdateTask = newTask => ({
+    type: TOGGLE_UPDATE_TASK,
+    payload: newTask
 });
 
-export const toggleDoneTask = taskId => ({
-    type: TOGGLE_DONE_TASK,
-    payload: taskId
+export const setTerm = term => ({
+    type: SET_TERM,
+    payload: term
 });
+
+export const setFilter = filter => ({
+    type: SET_FILTER,
+    payload: filter
+})

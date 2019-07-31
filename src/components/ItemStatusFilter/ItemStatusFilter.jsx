@@ -2,7 +2,7 @@ import React from 'react';
 
 import { connect } from 'react-redux';
 
-import { setFilter } from '../../store/tasks/actions';
+import { setFilter } from '../../store/projects/actions';
 
 import './ItemStatusFilter.css';
 
@@ -35,8 +35,8 @@ const ItemStatusFilter = (props) => {
 }
 
 
-const mapStateToProps = state => ({
-  filter: state.tasks.filter
+const mapStateToProps = ({ filter }) => ({
+  filter
 })
 
 const mapDispatchToProps = {
