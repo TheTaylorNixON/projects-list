@@ -11,29 +11,35 @@ import database from '../../services/firebase';
 
 class TodoListContainer extends Component {
 
-    filterTasks = (task) => {
-        const { filter } = this.props;
+    searchItem = (task, term) => {
+        return task.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
+    }
 
+    filterItem = (task, filter) => {
         switch (filter) {
             case 'done':
                 return task.done;
             case 'active':
                 return !task.done;
             default:
-                return !task.done;
+                return true;
         }
     }
 
     visibleTodos = () => {
-        const { tasks, selectedProject, term } = this.props;
+        const { tasks, selectedProject, filter, term } = this.props;
 
         const todos = {};
+        let task;
         for (let key in tasks) {
-            if (tasks[key].projectId === selectedProject) {
-                if (this.filterTasks(tasks[key])) {
-                    if (!term.length || (term.length && tasks[key].label.indexOf(term) > -1)) {
+            task = tasks[key];
+            if (task.projectId === selectedProject && this.filterItem(task, filter)) {
+                if (term.length) {
+                    if (this.searchItem(task, term)) {
                         todos[key] = tasks[key];
                     }
+                } else {
+                    todos[key] = tasks[key];
                 }
             }
         }
