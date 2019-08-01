@@ -11,11 +11,11 @@ import database from '../../services/firebase';
 
 class TodoListContainer extends Component {
 
-    searchItem = (task, term) => {
+    searchTask = (task, term) => {
         return task.label.toLowerCase().indexOf(term.toLowerCase()) > -1;
     }
 
-    filterItem = (task, filter) => {
+    filterTask = (task, filter) => {
         switch (filter) {
             case 'done':
                 return task.done;
@@ -33,9 +33,9 @@ class TodoListContainer extends Component {
         let task;
         for (let key in tasks) {
             task = tasks[key];
-            if (task.projectId === selectedProject && this.filterItem(task, filter)) {
+            if (task.projectId === selectedProject && this.filterTask(task, filter)) {
                 if (term.length) {
-                    if (this.searchItem(task, term)) {
+                    if (this.searchTask(task, term)) {
                         todos[key] = tasks[key];
                     }
                 } else {
