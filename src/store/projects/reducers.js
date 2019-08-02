@@ -1,5 +1,6 @@
 import {
     ADD_PROJECT,
+    DELETE_PROJECT,
     START_APP,
     SELECT_PROJECT,
     ADD_TASK,
@@ -36,6 +37,20 @@ export const projectsReducer = (state = defaultState, action) => {
                 }
             }
 
+        case DELETE_PROJECT:
+            console.log({
+                ...state,
+                projects: {
+                    ...action.payload
+                }
+            })
+            return {
+                ...state,
+                projects: {
+                    ...action.payload
+                }
+            }
+
         case START_APP:
             return {
                 ...state,
@@ -55,7 +70,6 @@ export const projectsReducer = (state = defaultState, action) => {
             return {
                 ...state,
                 tasks: {
-                    ...state.tasks,
                     ...action.payload
                 }
             }

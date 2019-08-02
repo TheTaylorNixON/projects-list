@@ -3,12 +3,12 @@ import ProjectsList from './ProjectsList';
 import ProjectAddForm from '../ProjectAddForm';
 
 import { connect } from 'react-redux';
-import { addProject, selectProject } from '../../store/projects/actions';
+import { addProject, deleteProject, selectProject } from '../../store/projects/actions';
 
 import database from '../../services/firebase';
 
 
-const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
+const ProjectsListContainer = ({ addProject, deleteProject, selectProject, projects }) => {
 
     const onProjectAdded = (projectName) => {
         const newChildRef = database.ref('projects').push();
@@ -22,14 +22,24 @@ const ProjectsListContainer = ({ addProject, selectProject, projects }) => {
         });
     }
 
-    const onProjectClicked = (key) => {
-        selectProject(key);
+    const onProjectDeleted = (projectId) => {
+        const newProjects = Object.assign({}, projects);
+        delete newProjects[projectId];
+
+        deleteProject(newProjects);
+        database.ref('projects/' + projectId).remove().catch((error) => {
+            console.log(`Не удалось удалить проект. Ошибка: ${error}`);
+        });
+    }
+
+    const onProjectClicked = (projectId) => {
+        selectProject(projectId);
     }
 
     return (
-        <div>
+        <div className="list-group-item">
             <ProjectAddForm onProjectAdded={onProjectAdded} />
-            <ProjectsList onProjectClicked={onProjectClicked} projects={projects} />
+            <ProjectsList onProjectClicked={onProjectClicked} projects={projects} onProjectDeleted={onProjectDeleted} />
         </div>
     )
 }
@@ -40,7 +50,8 @@ const mapStateToProps = ({ projects }) => ({
 
 const mapDispatchToProps = {
     addProject,
-    selectProject
+    selectProject,
+    deleteProject
 }
 
 
