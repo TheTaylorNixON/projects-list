@@ -22,8 +22,8 @@ const SearchPanel = (props) => {
 }
 
 
-const mapStateToProps = state => ({
-    term: state.tasks.term
+const mapStateToProps = ({ term }) => ({
+    term
 });
 
 const mapDispatchToProps = {

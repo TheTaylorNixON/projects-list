@@ -14,14 +14,14 @@ export const addProject = projectName => ({
     payload: projectName
 });
 
-export const deleteProject = newProjects => ({
+export const deleteProject = projectId => ({
     type: DELETE_PROJECT,
-    payload: newProjects
+    payload: projectId
 });
 
-export const selectProject = projectKey => ({
+export const selectProject = projectId => ({
     type: SELECT_PROJECT,
-    payload: projectKey
+    payload: projectId
 });
 
 export const startApp = data => ({
@@ -29,9 +29,9 @@ export const startApp = data => ({
     payload: data
 });
 
-export const addTask = task => ({
+export const addTask = taskName => ({
     type: ADD_TASK,
-    payload: task
+    payload: taskName
 });
 
 export const deleteTask = taskId => ({
@@ -39,9 +39,9 @@ export const deleteTask = taskId => ({
     payload: taskId
 });
 
-export const toggleUpdateTask = newTask => ({
+export const toggleUpdateTask = (taskId, propName) => ({
     type: TOGGLE_UPDATE_TASK,
-    payload: newTask
+    payload: { taskId, propName }
 });
 
 export const setTerm = term => ({
