@@ -1,4 +1,5 @@
 export const ADD_PROJECT = 'ADD_PROJECT';
+export const DELETE_PROJECT = 'DELETE_PROJECT';
 export const START_APP = 'START_APP';
 export const SELECT_PROJECT = 'SELECT_PROJECT';
 export const ADD_TASK = 'ADD_TASK';
@@ -11,6 +12,11 @@ export const SET_FILTER = 'SET_FILTER';
 export const addProject = projectName => ({
     type: ADD_PROJECT,
     payload: projectName
+});
+
+export const deleteProject = newProjects => ({
+    type: DELETE_PROJECT,
+    payload: newProjects
 });
 
 export const selectProject = projectKey => ({

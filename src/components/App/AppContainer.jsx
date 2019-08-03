@@ -4,7 +4,7 @@ import App from './App';
 
 import { connect } from 'react-redux';
 
-import { addProject, startApp } from '../../store/projects/actions';
+import { startApp } from '../../store/projects/actions';
 import { bindActionCreators } from 'redux';
 
 import database from '../../services/firebase';
@@ -125,14 +125,7 @@ class AppContainer extends Component {
         const todoCount = Object.keys(todoData).length - doneCount;
 
         return (
-            <App
-                todoCount={todoCount}
-                doneCount={doneCount}
-                visibleItems={visibleItems}
-                onDeleted={(id) => this.deleteItem(id)}
-                onToggleDeveloping={this.onToggleDeveloping}
-                onToggleDone={this.onToggleDone}
-            />
+            <App />
         );
     }
 }

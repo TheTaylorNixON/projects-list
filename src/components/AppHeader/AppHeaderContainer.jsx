@@ -5,23 +5,28 @@ import AppHeader from './AppHeader';
 import { connect } from 'react-redux';
 
 const AppHeaderContainer = (props) => {
-    const { todo, done } = props;
+    const { selectedProject, tasks } = props;
+    const todo = [], done = [];
+
+    Object.keys(tasks).forEach((key) => {
+        const task = tasks[key];
+        if (task.projectId !== selectedProject) return;
+        if (task.done) {
+            done.push(task);
+        } else {
+            todo.push(task);
+        }
+    });
+
     return (
-        <AppHeader todo={todo} done={done} />
+        <AppHeader todo={todo.length} done={done.length} />
     )
 }
 
 
-// const mapStateToProps = (state) => {
-//     console.log('IM STATE');
-//     console.log(state);
-//     return {
-//         todoData: state.todoData
-//     }
-// }
-
-const mapStateToProps = ({ todoData }) => ({
-    todoData
+const mapStateToProps = ({ selectedProject, tasks }) => ({
+    selectedProject,
+    tasks
 })
 
 
