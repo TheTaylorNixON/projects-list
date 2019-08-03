@@ -38,12 +38,6 @@ export const projectsReducer = (state = defaultState, action) => {
             }
 
         case DELETE_PROJECT:
-            console.log({
-                ...state,
-                projects: {
-                    ...action.payload
-                }
-            })
             return {
                 ...state,
                 projects: {
