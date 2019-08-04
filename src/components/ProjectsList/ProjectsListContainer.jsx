@@ -16,7 +16,7 @@ const ProjectsListContainer = ({ addProject, deleteProject, selectProject, proje
 }
 
 const mapStateToProps = ({ projects }) => ({
-    projects
+    projects: projects
 });
 
 const mapDispatchToProps = {

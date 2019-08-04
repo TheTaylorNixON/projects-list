@@ -7,6 +7,13 @@ export const DELETE_TASK = 'DELETE_TASK';
 export const TOGGLE_UPDATE_TASK = 'TOGGLE_UPDATE_TASK';
 export const SET_TERM = 'SET_TERM';
 export const SET_FILTER = 'SET_FILTER';
+export const SET_CURRENT_USER_ID = 'SET_CURRENT_USER_ID';
+
+// firebase on evnts
+export const ON_TASKS_UPDATE = 'ON_TASKS_UPDATE';
+export const ON_TASK_DELETE = 'ON_TASK_DELETE';
+export const ON_PROJECTS_UPDATE = 'ON_PROJECTS_UPDATE';
+export const ON_PROJECT_DELETE = 'ON_PROJECT_DELETE';
 
 
 export const addProject = projectName => ({
@@ -24,9 +31,9 @@ export const selectProject = projectId => ({
     payload: projectId
 });
 
-export const startApp = data => ({
+export const startApp = (data, currentUserId) => ({
     type: START_APP,
-    payload: data
+    payload: { data, currentUserId }
 });
 
 export const addTask = taskName => ({
@@ -52,4 +59,32 @@ export const setTerm = term => ({
 export const setFilter = filter => ({
     type: SET_FILTER,
     payload: filter
-})
+});
+
+export const setCurrentUserId = id => ({
+    type: SET_CURRENT_USER_ID,
+    payload: id
+});
+
+
+// firebase event listeners
+
+export const onTasksUpdate = task => ({
+    type: ON_TASKS_UPDATE,
+    payload: task
+});
+
+export const onTaskDelete = taskId => ({
+    type: ON_TASK_DELETE,
+    payload: taskId
+});
+
+export const onProjectsUpdate = project => ({
+    type: ON_PROJECTS_UPDATE,
+    payload: project
+});
+
+export const onProjectDelete = projectId => ({
+    type: ON_PROJECT_DELETE,
+    payload: projectId
+});

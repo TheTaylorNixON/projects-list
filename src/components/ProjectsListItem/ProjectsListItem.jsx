@@ -2,9 +2,16 @@ import React from 'react';
 
 import './ProjectsListItem.css';
 
+
 const ProjectsListItem = (props) => {
 
     const { label, onProjectClicked, onProjectDeleted } = props;
+    const onProjectClick = (e) => {
+        if (e.target.tagName === 'SPAN') {
+            onProjectClicked();
+        }
+    }
+
     return (
         // <li className="nav-item" onClick={onProjectClicked} >
         //     {/* <a href="#" className="nav-link">
@@ -17,7 +24,7 @@ const ProjectsListItem = (props) => {
         //         <i className="fa fa-trash-o" />
         //     </button>
         // </li>
-        <span onClick={onProjectClicked} className="list-group-item">
+        <span onClick={onProjectClick} className="list-group-item">
             <span>{label}</span>
             <button onClick={onProjectDeleted} type="button" className="btn btn-outline-danger btn-sm float-right">
                 <i className="fa fa-trash-o" />
@@ -25,5 +32,6 @@ const ProjectsListItem = (props) => {
         </span>
     )
 }
+
 
 export default ProjectsListItem;
