@@ -8,10 +8,14 @@ import { addTask } from '../../store/projects/actions';
 
 
 const ItemAddFormContainer = (props) => {
+    if (!props.selectedProject) return false;
+
     return (
         <ItemAddForm onItemAdded={props.addTask} />
     )
 }
 
 
-export default connect(null, { addTask })(ItemAddFormContainer);
+export default connect(({ selectedProject }) => ({
+    selectedProject
+}), { addTask })(ItemAddFormContainer);

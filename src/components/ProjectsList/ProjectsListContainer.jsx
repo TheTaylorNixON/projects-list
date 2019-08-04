@@ -6,17 +6,21 @@ import { connect } from 'react-redux';
 import { addProject, deleteProject, selectProject } from '../../store/projects/actions';
 
 
-const ProjectsListContainer = ({ addProject, deleteProject, selectProject, projects }) => {
+const ProjectsListContainer = ({ addProject, deleteProject, selectProject, selectedProject, projects }) => {
     return (
         <div className="list-group">
             <ProjectAddForm onProjectAdded={addProject} />
-            <ProjectsList onProjectClicked={selectProject} projects={projects} onProjectDeleted={deleteProject} />
+            <ProjectsList onProjectClicked={selectProject}
+                selectedProject={selectedProject}
+                projects={projects}
+                onProjectDeleted={deleteProject} />
         </div>
     )
 }
 
-const mapStateToProps = ({ projects }) => ({
-    projects: projects
+const mapStateToProps = ({ projects, selectedProject }) => ({
+    projects,
+    selectedProject
 });
 
 const mapDispatchToProps = {
