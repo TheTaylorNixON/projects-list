@@ -6,9 +6,11 @@ import './ProjectsList.css';
 
 const ProjectsList = (props) => {
 
-    const { projects, onProjectClicked, onProjectDeleted } = props;
+    const { projects, selectedProject, onProjectClicked, onProjectDeleted } = props;
     const project = Object.keys(projects).map((key) => {
+        const clazz = selectedProject === key ? 'selected-project' : '';
         return <ProjectsListItem
+            clazz={clazz}
             key={key}
             label={projects[key].label}
             onProjectClicked={() => onProjectClicked(key)}

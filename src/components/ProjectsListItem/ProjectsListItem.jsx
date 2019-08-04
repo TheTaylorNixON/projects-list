@@ -5,7 +5,7 @@ import './ProjectsListItem.css';
 
 const ProjectsListItem = (props) => {
 
-    const { label, onProjectClicked, onProjectDeleted } = props;
+    const { label, clazz, onProjectClicked, onProjectDeleted } = props;
     const onProjectClick = (e) => {
         if (e.target.tagName === 'SPAN') {
             onProjectClicked();
@@ -24,7 +24,7 @@ const ProjectsListItem = (props) => {
         //         <i className="fa fa-trash-o" />
         //     </button>
         // </li>
-        <span onClick={onProjectClick} className="list-group-item">
+        <span onClick={onProjectClick} className={`list-group-item ${clazz}`} >
             <span>{label}</span>
             <button onClick={onProjectDeleted} type="button" className="btn btn-outline-danger btn-sm float-right">
                 <i className="fa fa-trash-o" />

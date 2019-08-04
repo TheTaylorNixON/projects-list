@@ -41,7 +41,7 @@ const startApp = (state, action) => {
     return {
         ...state,
         ...action.payload.data,
-        selectedProject: Object.keys(projects)[0] || '',
+        selectedProject: projects ? Object.keys(projects)[0] : '',
         currentUserId: action.payload.currentUserId
     }
 }
@@ -86,8 +86,10 @@ const deleteProject = (state, action) => {
     Object.keys(tasks).forEach((key) => {
         if (tasks[key].projectId === projectId) {
             delete newTasks[key];
-            database.ref('tasks/' + key).remove().catch((error) => {
-                console.log(`Не удалось удалить задачу. Ошибка: ${error}`);
+            setTimeout(() => {
+                database.ref('tasks/' + key).remove().catch((error) => {
+                    console.log(`Не удалось удалить задачу. Ошибка: ${error}`);
+                });
             });
         }
     });
