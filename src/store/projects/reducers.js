@@ -9,7 +9,13 @@ import {
     DELETE_TASK,
     TOGGLE_UPDATE_TASK,
     SET_TERM,
-    SET_FILTER
+    SET_FILTER,
+    SET_CURRENT_USER_ID,
+    // firebase on listeners
+    ON_TASKS_UPDATE,
+    ON_TASK_DELETE,
+    ON_PROJECTS_UPDATE,
+    ON_PROJECT_DELETE
 } from './actions';
 
 
@@ -18,16 +24,25 @@ const defaultState = {
     tasks: {},
     selectedProject: '',
     filter: 'all',
-    term: ''
+    term: '',
+    currentUserId: ''
 }
 
 
 const startApp = (state, action) => {
-    const { projects } = action.payload;
+    if (!action.payload.data) {
+        return {
+            ...state,
+            currentUserId: action.payload.currentUserId
+        }
+    }
+
+    const { projects } = action.payload.data;
     return {
         ...state,
-        ...action.payload,
-        selectedProject: Object.keys(projects)[0]
+        ...action.payload.data,
+        selectedProject: Object.keys(projects)[0] || '',
+        currentUserId: action.payload.currentUserId
     }
 }
 
@@ -35,9 +50,12 @@ const addProject = (state, action) => {
     const newChildRef = database.ref('projects').push();
     const projectId = newChildRef.key;
     const projectName = action.payload;
-    const newProject = { [projectId]: action.payload }
+    const newProject = {
+        label: projectName,
+        userId: state.currentUserId
+    };
 
-    newChildRef.set(projectName).catch((error) => {
+    newChildRef.set(newProject).catch((error) => {
         console.log(`Не удалось добавить проект. Ошибка: ${error}`);
     });
 
@@ -46,7 +64,7 @@ const addProject = (state, action) => {
         selectedProject: projectId,
         projects: {
             ...state.projects,
-            ...newProject
+            [projectId]: newProject
         }
     }
 }
@@ -59,8 +77,10 @@ const deleteProject = (state, action) => {
     delete newProjects[projectId];
     const selectedProject = Object.keys(newProjects)[0];
 
-    database.ref('projects/' + projectId).remove().catch((error) => {
-        console.log(`Не удалось удалить проект. Ошибка: ${error}`);
+    setTimeout(() => {
+        database.ref('projects/' + projectId).remove().catch((error) => {
+            console.log(`Не удалось удалить проект. Ошибка: ${error}`);
+        });
     });
 
     Object.keys(tasks).forEach((key) => {
@@ -85,7 +105,8 @@ const addTask = (state, action) => {
         done: false,
         inDeveloping: false,
         projectId: state.selectedProject,
-        label: action.payload
+        label: action.payload,
+        userId: state.currentUserId
     }
 
     const newChildRef = database.ref('tasks').push();
@@ -104,9 +125,13 @@ const addTask = (state, action) => {
 
 const updateTask = (state, action) => {
     const { taskId, propName } = action.payload;
-    const { tasks } = state;
+    const { tasks, currentUserId } = state;
     const oldTask = tasks[taskId];
-    const newTask = { ...oldTask, [propName]: !oldTask[propName] };
+    const newTask = {
+        ...oldTask,
+        [propName]: !oldTask[propName],
+        userId: currentUserId
+    };
 
     database.ref('tasks/' + taskId).update(newTask).catch((error) => {
         console.log(`Не удалось обновить задачу. Ошибка: ${error}`);
@@ -126,8 +151,10 @@ const deleteTask = (state, action) => {
     const taskId = action.payload;
     delete newTasks[taskId];
 
-    database.ref('tasks/' + taskId).remove().catch((error) => {
-        console.log(`Не удалось удалить задачу. Ошибка: ${error}`);
+    setTimeout(() => {
+        database.ref('tasks/' + taskId).remove().catch((error) => {
+            console.log(`Не удалось удалить задачу. Ошибка: ${error}`);
+        });
     });
 
     return {
@@ -191,6 +218,55 @@ export const projectsReducer = (state = defaultState, action) => {
                 ...state,
                 filter: action.payload
             }
+
+        case SET_CURRENT_USER_ID:
+            return {
+                ...state,
+                currentUserId: action.payload
+            }
+
+        // firebase on events
+        case ON_TASKS_UPDATE:
+            return {
+                ...state,
+                tasks: {
+                    ...state.tasks,
+                    ...action.payload
+                }
+            }
+
+        case ON_TASK_DELETE:
+            const taskId = action.payload;
+            if (state.tasks[taskId]) {
+                const newTasks = { ...state.tasks };
+                delete newTasks[taskId];
+                return {
+                    ...state,
+                    tasks: newTasks
+                }
+            }
+            return state;
+
+        case ON_PROJECTS_UPDATE:
+            return {
+                ...state,
+                projects: {
+                    ...state.projects,
+                    ...action.payload
+                }
+            }
+
+        case ON_PROJECT_DELETE:
+            const projectId = action.payload;
+            if (state.projects[projectId]) {
+                const newProjects = { ...state.projects };
+                delete newProjects[projectId];
+                return {
+                    ...state,
+                    projects: newProjects
+                }
+            }
+            return state;
 
         default:
             return state;

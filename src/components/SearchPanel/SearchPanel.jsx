@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { connect } from 'react-redux';
-import { setTerm } from '../../store/tasks/actions';
+import { setTerm } from '../../store/projects/actions';
 
 import './SearchPanel.css';
 
