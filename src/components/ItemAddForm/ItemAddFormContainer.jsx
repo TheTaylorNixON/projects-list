@@ -8,7 +8,7 @@ import { addTask } from '../../store/projects/actions';
 
 
 const ItemAddFormContainer = (props) => {
-    if (!props.selectedProject) return false;
+    if (!props.selectedProject) return null;
 
     return (
         <ItemAddForm onItemAdded={props.addTask} />
